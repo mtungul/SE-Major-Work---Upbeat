@@ -2,8 +2,9 @@ import pygame
 import os
 
 class mainScreen:
-    def __init__(self, screen):
+    def __init__(self, screen, icons):
         self.screen = screen
+        self.icons = icons
         current_dir = os.getcwd()
 
         #load images
@@ -11,12 +12,10 @@ class mainScreen:
         self.rhythm_btn = pygame.image.load(os.path.join(current_dir, 'img', 'rhythm_btn.png')).convert_alpha()
         self.select = pygame.image.load(os.path.join(current_dir, 'img', 'select.png')).convert_alpha()
         self.logo = pygame.image.load(os.path.join(current_dir, 'img', 'logo.png')).convert_alpha()
-        self.background = pygame.image.load(os.path.join(current_dir,'img', 'background.png')).convert_alpha()
 
         #resize images
         self.select = pygame.transform.scale(self.select, (170, 50))
         self.logo = pygame.transform.scale(self.logo, (460, 150))
-        self.background = pygame.transform.scale(self.background, (1080, 600))
 
         #define buttons
         self.pitch_button = Button(600, 300, self.pitch_btn, (325, 200), self.open_pitch_levels)
@@ -28,13 +27,20 @@ class mainScreen:
 
     def open_rhythm_levels(self):
         print("Opening rhythm levels")
+        from rhythmLevels import levels, levelRunner
+        runner = levelRunner(self.screen, levels, self.icons)
+        return runner.get_current_screen()
     
     def handle_event(self, event):
-        self.pitch_button.handle_event(event)
-        self.rhythm_button.handle_event(event)
+        new_screen = self.pitch_button.handle_event(event)
+        if new_screen:
+            return new_screen
+
+        new_screen = self.rhythm_button.handle_event(event)
+        if new_screen:
+            return new_screen
 
     def draw(self):
-        self.screen.blit(self.background, (0, 0))
         self.screen.blit(self.logo, (315, 50))
         self.screen.blit(self.select, (450, 200))
 
@@ -66,4 +72,4 @@ class Button:
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             if self.rect.collidepoint(event.pos):
                 if self.action:
-                    self.action()
+                    return self.action()
