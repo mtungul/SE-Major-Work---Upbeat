@@ -1,83 +1,94 @@
-from utils.icons import Icons
 levels = [
     { # level 1
     'section' : 'rhythm',
+    'order' : 1,
     'lessonType' : 'reading',
-    'Title' : 'What is Rhythm?',
-    'Text' : 'In music, "rhythm" accounts for the timing and feel of a piece. It consists of the placement and duration of sounds or silences. In this level of UPBEAT you will learn about the different note values, time signatures, and tempo markings.',
+    'title' : 'What is Rhythm?',
+    'text' : 'In music, "rhythm" accounts for the timing and feel of a piece. It consists of the placement and duration of sounds or silences. In this level of UPBEAT you will learn about the different note values, time signatures, and tempo markings.',
     'icon' : 'book',
     },
     { # level 2
     'section' : 'rhythm',
+    'order' : 2,
     'lessonType' : 'lesson',
-    'Title' : 'Subdivisions and Note Values',
-    'Text' : '',
+    'title' : 'Subdivisions and Note Values',
+    'text' : '',
     'icon' : 'lesson',
     },
     { # level 3
     'section' : 'rhythm',
+    'order' : 3,
     'lessonType' : 'practice',
-    'Title' : 'Note Values Practice',
-    'Text' : '',
+    'title' : 'Note Values Practice',
+    'text' : '',
     'icon' : 'quaver',
     },
     { # level 4
     'section' : 'rhythm',
+    'order' : 4,
     'lessonType' : 'lesson',
-    'Title' : 'Rest Notes',
-    'Text' : '',
+    'title' : 'Rest Notes',
+    'text' : '',
     'icon' : 'lesson',
     },
     { # level 5
     'section' : 'rhythm',
+    'order' : 5,
     'lessonType' : 'practice',
-    'Title' : 'Rest Notes Practice',
-    'Text' : '',
+    'title' : 'Rest Notes Practice',
+    'text' : '',
     'icon' : 'quaver',
     },
     { # level 6
     'section' : 'rhythm',
+    'order' : 6,
     'lessonType' : 'lesson',
-    'Title' : 'Time Signatures',
-    'Text' : '',
+    'title' : 'Time Signatures',
+    'text' : '',
     'icon' : 'lesson',
     },
     { # level 7
     'section' : 'rhythm',
+    'order' : 7,
     'lessonType' : 'practice',
-    'Title' : 'Time Signature Practice',
-    'Text' : '',
+    'title' : 'Time Signature Practice',
+    'text' : '',
     'icon' : 'quaver',
     },
     { # level 8
     'section' : 'rhythm',
+    'order' : 8,
     'lessonType' : 'lesson',
-    'Title' : 'Tempo',
-    'Text' : '',
+    'title' : 'Tempo',
+    'text' : '',
     'icon' : 'lesson',
     },
     { # level 9
     'section' : 'rhythm',
+    'order' : 9,
     'lessonType' : 'practice',
-    'Title' : 'Final Practice',
-    'Text' : '',
+    'title' : 'Final Practice',
+    'text' : '',
     'icon' : 'quaver',
     },
     { # level 10
     'section' : 'rhythm',
+    'order' : 10,
     'lessonType' : 'end',
-    'Title' : 'You have successfully completed the Rhythm section!',
-    'Text' : '',
+    'title' : 'You have successfully completed the Rhythm section!',
+    'text' : '',
     'icon' : 'star',
     }
 ]
 
 class levelRunner:
     def __init__(self, screen, level_data, icons):
+        def get_order(level):
+            return level['order']
+        self.steps = sorted(level_data, key=get_order)
         self.screen = screen
-        self.steps = level_data 
         self.index = 0
-        self.completed = [False] * len(self.steps)
+        self.completed = [False] * len(self.steps) #sets all levels to current incomplete (array of 10 Falses)
         self.max_unlocked = 0
         self.icons = icons
 
@@ -90,10 +101,10 @@ class levelRunner:
 
         elif step["lessonType"] == "practice":
             from screens.practice import practiceScreen
-            return practiceScreen(self.screen, step, self)
+            return practiceScreen(self.screen, step, self, self.icons)
     
-    def next_step(self):
-        self.completed[self.index] = True
+    def next_level(self):
+        self.completed[self.index] = True #current level is considered as 'completed'
 
         #set the max unlocked level to mark progress
         if self.index + 1 > self.max_unlocked:
@@ -109,7 +120,7 @@ class levelRunner:
 
         return self.get_current_screen()
     
-    def go_to_step(self, index):
+    def go_to_level(self, index):
         if index <= self.max_unlocked:  # only allow unlocked steps
             self.index = index
             return self.get_current_screen()

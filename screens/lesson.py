@@ -1,7 +1,8 @@
+import os
 import pygame
-from rhythmLevels import levels
 from utils.text import wrap_text
 from utils.icons import tint_icon 
+from startScreen import Button
 
 class lessonScreen:
     def __init__(self, screen, step_data, runner, icons):
@@ -11,12 +12,17 @@ class lessonScreen:
         self.runner = runner
         self.icons = icons
 
-    def handle_event(self, event):
-        pass
+        self.nextButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'next_button.png')).convert_alpha()
+        self.nextButton = pygame.transform.scale(self.nextButton, (150, 60))
 
-    def draw_level_row(self):
+    def handle_event(self, event):
+        new_screen = self.next_button.handle_event(event)
+        if new_screen:
+            return new_screen
+
+    def draw_icon_row(self): #draws the row of icons at the top of the screen
         start_x = 80
-        y = 70
+        y = 60
         spacing = 85
 
         for i in range(len(self.runner.steps)):
@@ -40,18 +46,27 @@ class lessonScreen:
             rect = icon.get_rect(center=(x, y))
             self.screen.blit(icon, rect)
 
+    def go_next(self):
+        return self.runner.next_level()
+
     def draw(self):
-        self.draw_level_row()
-        pygame.draw.rect(self.screen, (255, 255, 255), (40, 150, 980, 400), border_radius=20)
+        self.draw_icon_row()
 
-        title_font = pygame.font.Font('fonts/new_amsterdam/NewAmsterdam.ttf', 30)
-        title = title_font.render(self.data["Title"], True, (0, 0, 0))
-        self.screen.blit(title, (55, 175))
+        pygame.draw.rect(self.screen, (255, 255, 255), (40, 125, 980, 400), border_radius=20)
 
-        lines = wrap_text(self.data["Text"], self.font, 970)
+        title_font = pygame.font.Font('fonts/new_amsterdam/NewAmsterdam.ttf', 40)
+        title = title_font.render(self.data["title"], True, (0, 0, 0))
+        self.screen.blit(title, (55, 140))
 
-        y = 225
+        lines = wrap_text(self.data["text"], self.font, 970)
+
+        y = 200
         for line in lines:
             text = self.font.render(line, True, (0, 0, 0))
             self.screen.blit(text, (60, y))
             y += 40
+        
+        self.next_button = Button(850, 530, self.nextButton, (150, 60), self.go_next)
+        self.next_button.draw(self.screen)
+
+

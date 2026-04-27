@@ -12,7 +12,6 @@ class Icons:
             "quaver": pygame.transform.smoothscale(pygame.image.load(os.path.join(current_dir, "img/r_quaver_icon.png")), icon_size),
             "star": pygame.transform.smoothscale(pygame.image.load(os.path.join(current_dir, "img/r_star_icon.png")), icon_size),
 
-
         }
 
         #pitch icons
