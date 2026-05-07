@@ -2,18 +2,17 @@ import pygame
 import os
 from startScreen import mainScreen 
 from utils.icons import Icons
+from utils.config import width, height
 
 pygame.init()
 
 #set screen size and title
 pygame.display.set_caption("software engineering project")
-width = 1080
-height = 600
 screen = pygame.display.set_mode((width, height))
 
 #set background (doesn't change)
 background = pygame.image.load(os.path.join(os.getcwd(),'img', 'background.png')).convert_alpha()
-background = pygame.transform.scale(background, (1080, 600))
+background = pygame.transform.scale(background, (width, height))
 
 icons = Icons()
 current_screen = mainScreen(screen, icons)

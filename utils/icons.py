@@ -4,7 +4,7 @@ import os
 class Icons:
     def __init__(self):
         current_dir = os.getcwd()
-        icon_size = (64, 64)
+        icon_size = (80, 80)
         #rhythm icons
         self.rhythm_icons = {
             "book": pygame.transform.smoothscale(pygame.image.load(os.path.join(current_dir, "img/r_book_icon.png")), icon_size),

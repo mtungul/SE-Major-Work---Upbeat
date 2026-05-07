@@ -5,6 +5,7 @@ levels = [
     'lessonType' : 'reading',
     'title' : 'What is Rhythm?',
     'text' : 'In music, "rhythm" accounts for the timing and feel of a piece. It consists of the placement and duration of sounds or silences. In this level of UPBEAT you will learn about the different note values, time signatures, and tempo markings.',
+    'img' : '',
     'icon' : 'book',
     },
     { # level 2
@@ -12,7 +13,8 @@ levels = [
     'order' : 2,
     'lessonType' : 'lesson',
     'title' : 'Subdivisions and Note Values',
-    'text' : '',
+    'text' : 'Subdivisions are how a beat is divided into a certain number of equal notes. Note values represent the duration of that note and relative to the tempo (speed) of the music.',
+    'img' : 'note_chart_value',
     'icon' : 'lesson',
     },
     { # level 3
@@ -124,3 +126,7 @@ class levelRunner:
         if index <= self.max_unlocked:  # only allow unlocked steps
             self.index = index
             return self.get_current_screen()
+        
+    def back_level(self):
+        self.index -= 1 #minus one to go back a level
+        return self.get_current_screen()

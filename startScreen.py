@@ -1,5 +1,6 @@
 import pygame
 import os
+from utils.config import width, height
 
 class mainScreen:
     def __init__(self, screen, icons):
@@ -14,12 +15,12 @@ class mainScreen:
         self.logo = pygame.image.load(os.path.join(current_dir, 'img', 'logo.png')).convert_alpha()
 
         #resize images
-        self.select = pygame.transform.scale(self.select, (170, 50))
-        self.logo = pygame.transform.scale(self.logo, (460, 150))
+        self.select = pygame.transform.scale(self.select, (width*(17/108), height/12))
+        self.logo = pygame.transform.scale(self.logo, (width*(23/54), height/4))
 
         #define buttons
-        self.pitch_button = Button(600, 300, self.pitch_btn, (325, 200), self.open_pitch_levels)
-        self.rhythm_button = Button(150, 300, self.rhythm_btn, (325, 200), self.open_rhythm_levels)
+        self.pitch_button = Button(width*(5/9), height/2, self.pitch_btn, (width*(65/216), height/3), self.open_pitch_levels)
+        self.rhythm_button = Button(width*(5/36), height/2, self.rhythm_btn, (width*(65/216), height/3), self.open_rhythm_levels)
 
     #filler functions for now
     def open_pitch_levels(self):
@@ -41,8 +42,8 @@ class mainScreen:
             return new_screen
 
     def draw(self):
-        self.screen.blit(self.logo, (315, 50))
-        self.screen.blit(self.select, (450, 200))
+        self.screen.blit(self.logo, (width*(7/24), height/12))
+        self.screen.blit(self.select, (width*(5/12), height*(2/5)))
 
         self.pitch_button.draw(self.screen)
         self.rhythm_button.draw(self.screen)
