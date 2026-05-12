@@ -22,7 +22,7 @@ levels = [
     'order' : 3,
     'lessonType' : 'practice',
     'title' : 'Note Values Practice',
-    'text' : '',
+    'text' : 'Now you will get to practice different rhythms! After clicking start, you will hear a four beat count in. Click the space bar to match the rhythm of the notes on the screen.',
     'icon' : 'quaver',
     },
     { # level 4
@@ -121,12 +121,14 @@ class levelRunner:
             return mainScreen(self.screen)
 
         return self.get_current_screen()
-    
-    def go_to_level(self, index):
-        if index <= self.max_unlocked:  # only allow unlocked steps
-            self.index = index
-            return self.get_current_screen()
-        
+
     def back_level(self):
         self.index -= 1 #minus one to go back a level
         return self.get_current_screen()
+    
+    def go_to_level(self, index):
+        if index <= self.max_unlocked: #only allow unlocked levels
+            self.index = index
+            return self.get_current_screen()
+
+        return None

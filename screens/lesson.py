@@ -12,6 +12,7 @@ class lessonScreen:
         self.data = step_data
         self.runner = runner
         self.icons = icons
+        self.icon_hitbox = []
 
         #load and size buttons
         self.nextButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'next_button.png')).convert_alpha()
@@ -24,6 +25,17 @@ class lessonScreen:
         self.noteChart = pygame.transform.scale(self.noteChart, (375, 125)) #NEED TO CHANGE THIS!!!
 
     def handle_event(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            mouse_pos = event.pos #stores where player clicked
+
+            for i, hitbox in enumerate(self.icon_hitbox):
+                if hitbox.collidepoint(mouse_pos):
+
+                    new_screen = self.runner.go_to_level(i)
+
+                    if new_screen:
+                        return new_screen
+                
         new_screen = self.next_button.handle_event(event)
         if new_screen:
             return new_screen
@@ -36,6 +48,7 @@ class lessonScreen:
         start_x = width*(2/27)
         y = height/10
         spacing = 106
+        self.icon_hitbox = []
 
         for i in range(len(self.runner.steps)):
             x = start_x + i * spacing
@@ -55,8 +68,9 @@ class lessonScreen:
             else:
                 icon = tint_icon(icon, (120, 120, 120)) #haven't completed yet
 
-            rect = icon.get_rect(center=(x, y))
-            self.screen.blit(icon, rect)
+            hitbox = icon.get_rect(center=(x, y))
+            self.icon_hitbox.append(hitbox)
+            self.screen.blit(icon, hitbox)
 
     def go_next(self):
         return self.runner.next_level()
@@ -72,13 +86,8 @@ class lessonScreen:
         title_font = pygame.font.Font('fonts/new_amsterdam/NewAmsterdam.ttf', 40)
         title = title_font.render(self.data["title"], True, (0, 0, 0))
         self.screen.blit(title, (width*(11/216), height*(7/30)))
-
-        if self.data["img"] != '':
-            line_width = width*(25/54)
-            #self.screen.blit(self.data["img"], (500, 200))
-        else:
-            line_width = width*(97/108)
         
+        line_width = width*(97/108)
         lines = wrap_text(self.data["text"], self.font, line_width)
 
         y = height/3
@@ -88,12 +97,6 @@ class lessonScreen:
             y += 40
         
         self.next_button.draw(self.screen)
-        self.back_button.draw(self.screen)
 
-        '''step = self.steps[self.index]
-        if step["lessonType"] != "reading":
-            self.next_button = Button(150, 530, self.nextButton, (150, 60), self.go_next)
-            self.next_button.draw(self.screen)'''
-
-
-#make sure to commit after fixing the sizes of everything --> 'resized screen and images + added back button'
+        if self.runner.index != 0:
+            self.back_button.draw(self.screen)
