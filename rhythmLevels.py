@@ -5,7 +5,7 @@ levels = [
     'lessonType' : 'reading',
     'title' : 'What is Rhythm?',
     'text' : 'In music, "rhythm" accounts for the timing and feel of a piece. It consists of the placement and duration of sounds or silences. In this level of UPBEAT you will learn about the different note values, time signatures, and tempo markings.',
-    'img' : '',
+    'img' : None,
     'icon' : 'book',
     },
     { # level 2
@@ -13,9 +13,17 @@ levels = [
     'order' : 2,
     'lessonType' : 'lesson',
     'title' : 'Subdivisions and Note Values',
-    'text' : 'Subdivisions are how a beat is divided into a certain number of equal notes. Note values represent the duration of that note and relative to the tempo (speed) of the music.',
-    'img' : 'note_chart_value',
+    'text' : 'Subdivisions are how a beat is divided into a certain number of equal notes. Note values represent the duration of that note and are relative to the tempo (speed) of the music. The graph below shows the most common note values used, and how many of each equate to one semibreve (has the largest duration).',
+    'img' : 'note_value_chart.png',
     'icon' : 'lesson',
+    'excerpts' : [
+        'level_2_excerpt_1.mp3',
+        'level_2_excerpt_2.mp3',
+    ],
+    'excerptImg' : [
+        'excerpt_1_notes.png',
+        'excerpt_2_notes.png',
+    ]
     },
     { # level 3
     'section' : 'rhythm',
@@ -83,6 +91,8 @@ levels = [
     }
 ]
 
+import pygame
+
 class levelRunner:
     def __init__(self, screen, level_data, icons):
         def get_order(level):
@@ -106,6 +116,7 @@ class levelRunner:
             return practiceScreen(self.screen, step, self, self.icons)
     
     def next_level(self):
+        pygame.mixer.stop()
         self.completed[self.index] = True #current level is considered as 'completed'
 
         #set the max unlocked level to mark progress
@@ -123,10 +134,12 @@ class levelRunner:
         return self.get_current_screen()
 
     def back_level(self):
+        pygame.mixer.stop()
         self.index -= 1 #minus one to go back a level
         return self.get_current_screen()
     
     def go_to_level(self, index):
+        pygame.mixer.stop()
         if index <= self.max_unlocked: #only allow unlocked levels
             self.index = index
             return self.get_current_screen()
