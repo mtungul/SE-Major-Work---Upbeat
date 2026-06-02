@@ -8,6 +8,7 @@ levels = [
     'img' : None,
     'icon' : 'book',
     },
+
     { # level 2
     'section' : 'rhythm',
     'order' : 2,
@@ -25,10 +26,11 @@ levels = [
         'excerpt_2_notes.png',
     ]
     },
+
     { # level 3
     'section' : 'rhythm',
     'order' : 3,
-    'lessonType' : 'practice',
+    'lessonType' : 'rhythmTapPractice',
     'title' : 'Note Values Practice',
     'text' : 'Now you will get to practice different rhythms! After clicking start, you will hear a four beat count in. Click the space bar to match the rhythm of the notes on the screen.',
     'icon' : 'quaver',
@@ -44,7 +46,7 @@ levels = [
     { # level 5
     'section' : 'rhythm',
     'order' : 5,
-    'lessonType' : 'practice',
+    'lessonType' : 'rhythmTapPractice',
     'title' : 'Rest Notes Practice',
     'text' : '',
     'icon' : 'quaver',
@@ -60,7 +62,7 @@ levels = [
     { # level 7
     'section' : 'rhythm',
     'order' : 7,
-    'lessonType' : 'practice',
+    'lessonType' : 'questionPractice',
     'title' : 'Time Signature Practice',
     'text' : '',
     'icon' : 'quaver',
@@ -76,7 +78,7 @@ levels = [
     { # level 9
     'section' : 'rhythm',
     'order' : 9,
-    'lessonType' : 'practice',
+    'lessonType' : 'rhythmTapPractice',
     'title' : 'Final Practice',
     'text' : '',
     'icon' : 'quaver',
@@ -111,8 +113,12 @@ class levelRunner:
             from screens.lesson import lessonScreen
             return lessonScreen(self.screen, step, self, self.icons)
 
-        elif step["lessonType"] == "practice":
-            from screens.practice import practiceScreen
+        elif step["lessonType"] == "questionPractice":
+            from screens.questionPractice import practiceScreen
+            return practiceScreen(self.screen, step, self, self.icons)
+        
+        elif step["lessonType"] == "rhythmTapPractice":
+            from screens.rhythmTapPractice import practiceScreen
             return practiceScreen(self.screen, step, self, self.icons)
     
     def next_level(self):
