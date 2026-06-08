@@ -18,12 +18,12 @@ levels = [
     'img' : 'note_value_chart.png',
     'icon' : 'lesson',
     'excerpts' : [
-        'level_2_excerpt_1.mp3',
-        'level_2_excerpt_2.mp3',
+        'rhythm_lvl2_ex1.mp3',
+        'rhythm_lvl2_ex2.mp3',
     ],
     'excerptImg' : [
-        'excerpt_1_notes.png',
-        'excerpt_2_notes.png',
+        'rhythm_lvl2_img1.png',
+        'rhythm_lvl2_img2.png',
     ]
     },
 
@@ -35,14 +35,25 @@ levels = [
     'text' : 'Now you will get to practice different rhythms! After clicking start, you will hear a four beat count in. Click the space bar to match the rhythm of the notes on the screen.',
     'icon' : 'quaver',
     },
+
     { # level 4
     'section' : 'rhythm',
     'order' : 4,
     'lessonType' : 'lesson',
     'title' : 'Rest Notes',
-    'text' : '',
+    'text' : 'Music is the art of both sound AND silence. As important as it is knowing when to play, it is also important to know when NOT to play. "Rests" are notes that tell us when to not play. Similarly to the previous lesson, there are different note values for each rest.',
+    'img' : 'rest_value_chart.png',
     'icon' : 'lesson',
+    'excerpts' : [
+        'rhythm_lvl4_ex1.mp3',
+        'rhythm_lvl4_ex2.mp3',
+    ],
+    'excerptImg' : [
+        'rhythm_lvl4_img1.png',
+        'rhythm_lvl4_img2.png',
+    ]
     },
+
     { # level 5
     'section' : 'rhythm',
     'order' : 5,
@@ -51,14 +62,16 @@ levels = [
     'text' : '',
     'icon' : 'quaver',
     },
+
     { # level 6
     'section' : 'rhythm',
     'order' : 6,
     'lessonType' : 'lesson',
     'title' : 'Time Signatures',
-    'text' : '',
+    'text' : 'A time signature is the musical notation that dictates the pulse and rhythmic feel of a piece. It lets us know how to count before we start playing.',
     'icon' : 'lesson',
     },
+
     { # level 7
     'section' : 'rhythm',
     'order' : 7,
@@ -67,14 +80,16 @@ levels = [
     'text' : '',
     'icon' : 'quaver',
     },
+
     { # level 8
     'section' : 'rhythm',
     'order' : 8,
     'lessonType' : 'lesson',
     'title' : 'Tempo',
-    'text' : '',
+    'text' : 'Tempo is the speed of a musical piece, and is it measured in beats per minute (BPM).',
     'icon' : 'lesson',
     },
+
     { # level 9
     'section' : 'rhythm',
     'order' : 9,
@@ -83,6 +98,7 @@ levels = [
     'text' : '',
     'icon' : 'quaver',
     },
+
     { # level 10
     'section' : 'rhythm',
     'order' : 10,

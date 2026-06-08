@@ -16,8 +16,8 @@ class lessonScreen(baseScreen):
         self.lesson_image = None
         if self.data.get("img"):
             image_path = os.path.join(os.getcwd(), 'img', self.data["img"])
-            self.lesson_image = pygame.image.load(image_path).convert_alpha()
-            self.lesson_image = pygame.transform.scale(self.lesson_image, (475, 250))
+            self.lesson_image_original = pygame.image.load(image_path).convert_alpha()
+            self.lesson_image = pygame.transform.smoothscale(self.lesson_image_original, (544, 260))
 
         #sound excerpts
         self.audio = excerptPlayer()
@@ -26,8 +26,8 @@ class lessonScreen(baseScreen):
         
         for image_name in self.data.get("excerptImg", []):
             image_path = os.path.join(os.getcwd(), 'img', image_name)
-            image = pygame.image.load(image_path).convert_alpha()
-            image = pygame.transform.scale(image, (320, 80))
+            image_original = pygame.image.load(image_path).convert_alpha()
+            image = pygame.transform.smoothscale(image_original, (501, 91))
             self.excerpt_images.append(image)
         
         for excerpt in self.excerpts:
@@ -39,7 +39,7 @@ class lessonScreen(baseScreen):
 
         for i, excerpt in enumerate(self.excerpts):
 
-            button = Button(width*(11/20), height*(11/20) + i * 120, self.playButton, (50, 50), lambda e=excerpt: self.audio.play(e)) #lambda etc. makes sure each sound is played besides just the last one
+            button = Button(width*(13/25), height*(11/20) + i * 120, self.playButton, (50, 50), lambda e=excerpt: self.audio.play(e)) #lambda etc. makes sure each sound is played besides just the last one
             image = self.excerpt_images[i]
             self.excerpt_items.append({
                 "button": button,
@@ -68,7 +68,7 @@ class lessonScreen(baseScreen):
 
         #images
         if self.lesson_image:
-            self.screen.blit(self.lesson_image, (width/12, y + 10))
+            self.screen.blit(self.lesson_image, (width/12, y + 5))
 
         #listening excerpts
         for item in self.excerpt_items:
@@ -77,7 +77,7 @@ class lessonScreen(baseScreen):
 
             button.draw(self.screen)
 
-            image_x = button.rect.x + 100
+            image_x = button.rect.x + 80
             image_y = button.rect.y - 20
 
             self.screen.blit(image, (image_x, image_y))
