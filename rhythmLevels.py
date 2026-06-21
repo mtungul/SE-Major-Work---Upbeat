@@ -34,6 +34,12 @@ levels = [
     'title' : 'Note Values Practice',
     'text' : 'Now you will get to practice different rhythms! After clicking start, you will hear a four beat count in. Click the space bar to match the rhythm of the notes on the screen.',
     'icon' : 'quaver',
+    'notes_easy' : ['crotchet', 'crotchet', 'crotchet', 'crotchet', 'minim', 'minim'],
+    'notes_med' : ['crotchet', 'crotchet', 'quavers', 'quavers', 'semibreve'],
+    'notes_hard' : ['crotchet', 'crotchet', 'crotchet', 'quavers', 'quavers', 'quavers', 'minim'],
+    'num_notes_easy' : '6',
+    'num_notes_med' : '5',
+    'num_notes_hard' : '7',
     },
 
     { # level 4
@@ -68,13 +74,23 @@ levels = [
     'order' : 6,
     'lessonType' : 'lesson',
     'title' : 'Time Signatures',
-    'text' : 'A time signature is the musical notation that dictates the pulse and rhythmic feel of a piece. It lets us know how to count before we start playing.',
+    'text' : 'A time signature is the musical notation that dictates the pulse and rhythmic feel of a piece. It lets us know how to count before we start playing. Below is a diagram of the different parts of reading sheet music.',
+    'img' : 'stave_chart.png',
+    'icon' : 'lesson',
+    },
+
+    { # level 6.5
+    'section' : 'rhythm',
+    'order' : 7,
+    'lessonType' : 'lesson',
+    'title' : 'Time Signature cont.',
+    'text' : 'Here are some common and uncommon time signatures:',
     'icon' : 'lesson',
     },
 
     { # level 7
     'section' : 'rhythm',
-    'order' : 7,
+    'order' : 8,
     'lessonType' : 'questionPractice',
     'title' : 'Time Signature Practice',
     'text' : '',
@@ -83,16 +99,16 @@ levels = [
 
     { # level 8
     'section' : 'rhythm',
-    'order' : 8,
+    'order' : 9,
     'lessonType' : 'lesson',
     'title' : 'Tempo',
-    'text' : 'Tempo is the speed of a musical piece, and is it measured in beats per minute (BPM).',
+    'text' : 'Tempo is the speed of a musical piece, and is it measured in beats per minute (BPM). There are different Italian terms used to describe the different tempo in each piece. They are determined by a range of BPM - however, the range of BPM may differ between musicians, thus tempo names are interpreted from its "feel".',
     'icon' : 'lesson',
     },
 
     { # level 9
     'section' : 'rhythm',
-    'order' : 9,
+    'order' : 10,
     'lessonType' : 'rhythmTapPractice',
     'title' : 'Final Practice',
     'text' : '',
@@ -101,7 +117,7 @@ levels = [
 
     { # level 10
     'section' : 'rhythm',
-    'order' : 10,
+    'order' : 11,
     'lessonType' : 'end',
     'title' : 'You have successfully completed the Rhythm section!',
     'text' : '',

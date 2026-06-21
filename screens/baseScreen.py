@@ -57,7 +57,7 @@ class baseScreen:
             if i == self.runner.index: 
                 icon = tint_icon(icon, (255, 255, 255)) #current level
             elif self.runner.completed[i]:
-                icon = tint_icon(icon, (235, 235, 235)) #completed levels
+                icon = tint_icon(icon, (215, 215, 215)) #completed levels
             else:
                 icon = tint_icon(icon, (120, 120, 120)) #haven't completed yet
 
@@ -82,7 +82,7 @@ class baseScreen:
         #draw title
         title_font = pygame.font.Font('fonts/new_amsterdam/NewAmsterdam.ttf', 40)
         title = title_font.render(self.data["title"], True, (0, 0, 0))
-        self.screen.blit(title, (width*(11/216), height*(7/30)))
+        self.screen.blit(title, (width/18, height*(7/30)))
 
         #next and back buttons
         if self.show_next_button(): #makes it easier to overide in practice.py

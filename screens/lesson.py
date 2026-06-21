@@ -67,8 +67,13 @@ class lessonScreen(baseScreen):
             y += 40
 
         #images
-        if self.lesson_image:
-            self.screen.blit(self.lesson_image, (width/12, y + 5))
+        if self.excerpt_items:
+            if self.lesson_image:
+                self.screen.blit(self.lesson_image, (width/12, y + 5))
+        else:
+            if self.lesson_image:
+                self.lesson_image = pygame.transform.smoothscale(self.lesson_image_original, (width*(0.73), height*(0.40)))
+                self.screen.blit(self.lesson_image, (width/7, y + 5))
 
         #listening excerpts
         for item in self.excerpt_items:
