@@ -40,6 +40,7 @@ levels = [
     'num_notes_easy' : '6',
     'num_notes_med' : '5',
     'num_notes_hard' : '7',
+    'bpm' : 60,
     },
 
     { # level 4
