@@ -11,14 +11,18 @@ from screens.baseScreen import baseScreen
 class practiceScreen(baseScreen):
     def __init__(self, screen, step_data, runner, icons):
         super().__init__(screen, step_data, runner, icons)
-        #self.completed = False
+        self.completed = False
         self.state = 'start'
+        self.points = 0
+        self.level_passed = False
+        self.level_text = None
+
         self.beginButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'begin_btn.png')).convert_alpha()
         self.begin_button = Button(width*(31/72), height/2, self.beginButton, (width*(5/36), height*(1/10)), self.generate_notes)
         self.tryAgainButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'try_again_btn.png')).convert_alpha()
-        self.try_again_button = Button(width*(20/72), height*(4/5), self.tryAgainButton, (width*(5/36), height*(1/10)), self.generate_notes)
+        self.try_again_button = Button(width*(20/72), height*(0.75), self.tryAgainButton, (width*(5/36), height*(1/10)), self.generate_notes)
         self.nextLevelButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'next_button.png')).convert_alpha()
-        self.next_level_button = Button(width*(43/72), height*(4/5), self.nextLevelButton, (width*(5/36), height*(1/10)), self.generate_notes)
+        self.next_level_button = Button(width*(43/72), height*(0.75), self.nextLevelButton, (width*(5/36), height*(1/10)), self.next_level)
 
         #load and resize note and rest images
         crotchet_img = pygame.image.load(os.path.join(os.getcwd(),'img', 'crotchet.png')).convert_alpha()
@@ -33,7 +37,7 @@ class practiceScreen(baseScreen):
         self.note_definitions = {
             'crotchet' : {'image': crotchet_img, 'duration': 1.0},
             'crotchet_rest' : {'image': crotchet_rest_img, 'duration': 1.0},
-            'quavers' : {'image': quavers_img, 'duration': 1.0},
+            'quavers' : {'image': quavers_img, 'duration': 0.5},
             'minim' : {'image': minim_img, 'duration': 2.0},
             'minim_rest' : {'image': minim_rest_img, 'duration': 2.0},
             'semibreve' : {'image': semibreve_img, 'duration': 4.0},
@@ -56,6 +60,7 @@ class practiceScreen(baseScreen):
             new_screen = self.begin_button.handle_event(event)
             if new_screen:
                 return new_screen
+            return None
         
         elif self.state == 'practice':
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
@@ -63,7 +68,7 @@ class practiceScreen(baseScreen):
                 self.check_hit_start()
             if event.type == pygame.KEYUP and event.key == pygame.K_SPACE:
                 self.check_hit_end()
-                self.note_channel.fadeout(150)
+                self.note_channel.stop()
             return None  #ignore all input by mouse and only take in input by space bar so user cannot reset the notes mid practice
 
         elif self.state == 'finished':
@@ -74,6 +79,14 @@ class practiceScreen(baseScreen):
             new_screen = self.next_level_button.handle_event(event)
             if new_screen:
                 return new_screen
+        
+            new_screen = self.back_button.handle_event(event)
+            if new_screen:
+                return new_screen
+            
+            if self.completed:
+                    return self.next_button.handle_event(event)
+            return None
         
         return super().handle_event(event)
 
@@ -116,15 +129,42 @@ class practiceScreen(baseScreen):
         self.current_note += 1
 
         if self.current_note >= len(self.active_notes):
-            self.state = 'finished'
+            if self.perfect_count + self.good_count > self.miss_count and self.good_hold_count > self.bad_hold_count:
+                self.level_passed = True
+            else:
+                self.level_passed = False
 
+            if self.points >= 4 and self.level_passed:
+                self.completed = True
+
+            self.state = 'finished'
+    
     def show_next_button(self):
-        return True
-        #return self.completed
+        return self.completed
+
+    def reset_scores(self):
+        self.perfect_count = 0
+        self.good_count = 0
+        self.miss_count = 0
+        self.good_hold_count = 0
+        self.bad_hold_count = 0
+
+    def next_level(self):
+        if self.level_passed:
+            self.points += 2
+        else:
+            self.points -= 1
+        
+        if self.points > 5:
+                self.completed = True
+                return 
+        
+        self.generate_notes()
 
     def generate_notes(self):
         self.state = 'practice'
         self.draw_layout() #cover current text
+        self.reset_scores()
          
         #4 beat count in at 60 bpm
         count_in = pygame.mixer.Sound("soundExcerpts/60bpm.mp3")
@@ -137,19 +177,22 @@ class practiceScreen(baseScreen):
         space = 180
         y = height/2
 
-        points = 0 #may need to move this later
-        if points in [0, 1]:
+        if self.points <= 1:
             notes = self.data["notes_easy"] 
             num_notes = int(self.data["num_notes_easy"])
-        elif points in [2, 3]:
+            level = self.font.render("Difficulty: Easy", True, (0, 0, 0))
+        elif self.points <= 3:
             notes = self.data["notes_med"]
             num_notes = int(self.data["num_notes_med"])
-        elif points in [4, 5]:
-            start_x = width/12
+            level = self.font.render("Difficulty: Medium", True, (0, 0, 0))
+        else:
+            start_x = width/13
             space = 170
             notes = self.data["notes_hard"]
             num_notes = int(self.data["num_notes_hard"])
+            level = self.font.render("Difficulty: Hard", True, (0, 0, 0))
 
+        self.level_text = level
         displayed_notes = random.sample(notes, k=num_notes) #array of random notes
         self.active_notes = [] #empty array
 
@@ -166,8 +209,19 @@ class practiceScreen(baseScreen):
                 "hit_time": current_time,
                 "hit": False,
             })
-
+            
             current_time += self.note_definitions[note]["duration"] * self.ms_per_beat
+
+            if note == 'quavers': #since quavers are 2 consecutive beats with one image they need special consideration 
+                self.active_notes.append({
+                'image' : None,
+                'position': None,
+                'duration' : self.note_definitions[note]["duration"],
+                "hit_time": current_time,
+                "hit": False,
+                })
+
+                current_time += self.note_definitions[note]["duration"] * self.ms_per_beat
 
     def draw(self):
         self.draw_layout() #draw text
@@ -181,48 +235,72 @@ class practiceScreen(baseScreen):
                 text = self.font.render(line, True, (0, 0, 0))
                 self.screen.blit(text, (width/18, y))
                 y += 40
-
+            
             self.begin_button.draw(self.screen)  
+
         elif self.state == 'practice':
+            if self.level_text:
+                self.screen.blit(self.level_text, (width*(0.8), height*(0.25)))
+
             for i, note in enumerate(self.active_notes):
                 img = note["image"]
                 pos = note["position"]
-                
-                self.screen.blit(img, pos)
+               
+                if img is not None:
+                    self.screen.blit(img, pos)
 
-                if i == self.current_note:
+                if i == self.current_note and pos is not None:
                     pygame.draw.circle(self.screen, (255, 0, 0), (int(pos[0] + 50), int(pos[1] - 20)), 8)
 
         elif self.state == 'finished':
+            if self.level_text:
+                self.screen.blit(self.level_text, (width*(0.8), height*(0.25)))
             self.try_again_button.draw(self.screen)
-            self.next_level_button.draw(self.screen)
+            if not self.completed:
+                self.next_level_button.draw(self.screen)
+            title_font = pygame.font.Font('fonts/new_amsterdam/NewAmsterdam.ttf', 40)
+            text_font = pygame.font.Font('fonts/new_amsterdam/NewAmsterdam.ttf', 35)
 
-            perfect_text = self.font.render("Perfect", True, (0, 150, 0))
-            good_text = self.font.render("Good", True, (0, 150, 0))
-            miss_text = self.font.render("Miss", True, (0, 150, 0))
+            #define all text for score screen
+            perfect_text = text_font.render("Perfect", True, (0, 150, 0))
+            good_text = text_font.render("Good", True, (150, 150, 0))
+            miss_text = text_font.render("Miss", True, (150, 0, 0))
             
-            perfect_num = self.font.render(str(self.perfect_count), True, (0, 150, 0))
-            good_num = self.font.render(str(self.good_count), True, (0, 150, 0))
-            miss_num = self.font.render(str(self.miss_count), True, (0, 150, 0))
+            perfect_num = text_font.render(str(self.perfect_count), True, (0, 0, 0))
+            good_num = text_font.render(str(self.good_count), True, (0, 0, 0))
+            miss_num = text_font.render(str(self.miss_count), True, (0, 0, 0))
            
-            '''good_hold_text = self.font.render("Good Hold", True, (0, 150, 0))
-            bad_hold_text = self.font.render("Bad Hold", True, (0, 150, 0))
+            good_hold_text = text_font.render("Good Hold", True, (0, 150, 0))
+            bad_hold_text = text_font.render("Bad Hold", True, (150, 0, 0))
             
-            good_hold_num = self.font.render(str(self.good_hold_count), True, (0, 150, 0))
-            bad_hold_num = self.font.renderstr(self.bad_hold_count), True, (0, 150, 0)
+            good_hold_num = text_font.render(str(self.good_hold_count), True, (0, 0, 0))
+            bad_hold_num = text_font.render(str(self.bad_hold_count), True, (0, 0, 0))
             
-            speed_text = self.font.render("Speed:", True, (0, 0, 0))
-            duration_text = self.font.render("Duration", True, (0, 0, 0))
-            score_text = self.font.render("Your Score", True, (0, 0, 0))'''
+            speed_text = text_font.render("Speed:", True, (0, 0, 0))
+            duration_text = text_font.render("Duration:", True, (0, 0, 0))
+            score_text = title_font.render("Your Score", True, (0, 0, 0))
 
-            self.screen.blit(perfect_text, (width*(1/4), height/2))
-            self.screen.blit(good_text, (width*(2/4), height/2))
-            self.screen.blit(miss_text, (width*(3/4), height/2))
+            #display text for score screen
+            self.screen.blit(score_text, (width*(0.45), height*(0.25)))
+
+            self.screen.blit(speed_text, (width*(0.1), height*(0.38)))
+            self.screen.blit(perfect_text, (width*(1/4), height*(0.38)))
+            self.screen.blit(good_text, (width*(2/4), height*(0.38)))
+            self.screen.blit(miss_text, (width*(3/4), height*(0.38)))
             
-            self.screen.blit(perfect_num, (width*(1/4), height*(3/4)))
-            self.screen.blit(good_num, (width*(2/4), height*(3/4)))
-            self.screen.blit(miss_num, (width*(3/4), height*(3/4)))
+            self.screen.blit(perfect_num, (width*(1/4), height*(0.43)))
+            self.screen.blit(good_num, (width*(2/4), height*(0.43)))
+            self.screen.blit(miss_num, (width*(3/4), height*(0.43)))
 
+            self.screen.blit(duration_text, (width*(0.1), height*(0.58)))
+            self.screen.blit(good_hold_text, (width*(1/3), height*(0.58)))
+            self.screen.blit(bad_hold_text, (width*(2/3), height*(0.58)))
+            
+            self.screen.blit(good_hold_num, (width*(1/3), height*(0.63)))
+            self.screen.blit(bad_hold_num, (width*(2/3), height*(0.63)))
 
+            accuracy = round((self.perfect_count + self.good_count + self.good_hold_count)/(self.perfect_count + self.good_count + self.good_hold_count + self.miss_count + self.bad_hold_count)*100)
+            accuracy_text = text_font.render(f"Overall Accuracy: {accuracy}%", True, (0, 0, 0))
+            self.screen.blit(accuracy_text, (width*(0.41), height*(0.7)))
 
 
