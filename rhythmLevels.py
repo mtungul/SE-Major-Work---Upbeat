@@ -32,7 +32,7 @@ levels = [
     'order' : 3,
     'lessonType' : 'rhythmTapPractice',
     'title' : 'Note Values Practice',
-    'text' : 'Now you will get to practice different rhythms! After clicking start, you will hear a four beat count in. Click the space bar to match the rhythm of the notes on the screen.',
+    'text' : 'Now you will get to practice different rhythms! After clicking Begin, you will hear a four beat count in. Click the space bar to match the rhythm of the notes on the screen.',
     'icon' : 'quaver',
     'notes_easy' : ['crotchet', 'crotchet', 'crotchet', 'crotchet', 'minim', 'minim'],
     'notes_med' : ['crotchet', 'crotchet', 'quavers', 'quavers', 'semibreve'],
@@ -66,8 +66,15 @@ levels = [
     'order' : 5,
     'lessonType' : 'rhythmTapPractice',
     'title' : 'Rest Notes Practice',
-    'text' : '',
+    'text' : 'Now you will get to practice playing both sound and silence. After clicking Begin, you will hear a four beat count in. Click the space bar to match the rhythm of the notes on the screen. TIP: Make sure not to press the space bar on a rest note, instead always keep counting to ensure you get the next note on time!',
     'icon' : 'quaver',
+    'notes_easy' : ['crotchet', 'crotchet', 'crotchet', 'crotchet_rest', 'minim_rest', 'minim'],
+    'notes_med' : ['crotchet', 'crotchet', 'crotchet_rest', 'quavers', 'minim_rest'],
+    'notes_hard' : ['crotchet', 'crotchet_rest', 'minim', 'quavers', 'quavers', 'semibreve_rest'],
+    'num_notes_easy' : '6',
+    'num_notes_med' : '5',
+    'num_notes_hard' : '6',
+    'bpm' : 60,
     },
 
     { # level 6
@@ -85,7 +92,8 @@ levels = [
     'order' : 7,
     'lessonType' : 'lesson',
     'title' : 'Time Signature cont.',
-    'text' : 'Here are some common and uncommon time signatures:',
+    'text' : '',
+    'img' : 'time_signature.png',
     'icon' : 'lesson',
     },
 
@@ -94,8 +102,76 @@ levels = [
     'order' : 8,
     'lessonType' : 'questionPractice',
     'title' : 'Time Signature Practice',
-    'text' : '',
+    'text' : "After clicking Begin, you will be asked 6 multiple choice questions about Time Signatures. Answer them all correctly to proceed to the next level. NOTE: Don't worry if you get a question wrong, you will be able to re-answer them again!",
     'icon' : 'quaver',
+    'questions' : [
+        {
+           'image' : None,
+            'question' : "What is a time signature?",
+            'note' : None,
+            'answers' : [
+                {'text' : "A composer's signature when they write a piece", 'correct' : False},
+                {'text' : "The musical notation that dictates the pulse and rhythm", 'correct' : True},
+                {'text' : "How long a musical piece goes for", 'correct' : False},
+                {'text' : "The written numbers that indicate the speed of a piece", 'correct' : False},
+            ],
+        },
+        {
+            'image' : 'top_num.png',
+            'question' : "What does the top number indicate?",
+            'note' : None,
+            'answers' : [
+                {'text' : "How many beats in a bar", 'correct' : True},
+                {'text' : "What type of beat is used", 'correct' : False},
+                {'text' : "How many bars there are", 'correct' : False},
+                {'text' : "How long a bar is", 'correct' : False},
+            ],
+        },
+        {
+            'image' : 'bottom_num.png',
+            'question' : "What does the bottom number indicate?",
+            'note' : None,
+            'answers' : [
+                {'text' : "How many beats in a bar", 'correct' : False},
+                {'text' : "What type of beat is used", 'correct' : True},
+                {'text' : "How many bars there are", 'correct' : False},
+                {'text' : "How long a bar is", 'correct' : False},
+            ], 
+        },
+        {
+            'image' : '3-4.png', # 3 4
+            'question' : "How many beats per bar in this time signature?",
+            'note' : None,
+            'answers' : [
+                {'text' : "3", 'correct' : True},
+                {'text' : "4", 'correct' : False},
+                {'text' : "7", 'correct' : False},
+                {'text' : "2", 'correct' : False},
+            ], 
+        },
+        {
+            'image' : '4-8.png', # 4 8 
+            'question' : "What note value is used to count in this time signature?",
+            'note' : None,
+            'answers' : [
+                {'text' : "Quavers", 'correct' : True},
+                {'text' : "Crotchets", 'correct' : False},
+                {'text' : "Minims", 'correct' : False},
+                {'text' : "Semibreves", 'correct' : False},
+            ], 
+        },
+        {
+            'image' : None,
+            'question' : "What is the time signature of a piece with 3 minims per bar?",
+            'note' : "Note: Top number | Bottom number",
+            'answers' : [
+                {'text' : "3 | 2", 'correct' : True},
+                {'text' : "2 | 3", 'correct' : False},
+                {'text' : "3 | 4", 'correct' : False},
+                {'text' : "4 | 3", 'correct' : False},
+            ] 
+        },
+    ],
     },
 
     { # level 8
@@ -134,7 +210,7 @@ class levelRunner:
             return level['order']
         self.steps = sorted(level_data, key=get_order)
         self.screen = screen
-        self.index = 0
+        self.index = 3
         self.completed = [False] * len(self.steps) #sets all levels to current incomplete (array of 10 Falses)
         self.max_unlocked = 0
         self.icons = icons

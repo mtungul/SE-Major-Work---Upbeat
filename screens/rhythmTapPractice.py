@@ -4,7 +4,6 @@ import random
 from startScreen import Button
 from utils.text import wrap_text
 from utils.config import width, height
-from utils.excerpts import excerptPlayer
 from screens.baseScreen import baseScreen
 
 
@@ -129,15 +128,7 @@ class practiceScreen(baseScreen):
         self.current_note += 1
 
         if self.current_note >= len(self.active_notes):
-            if self.perfect_count + self.good_count > self.miss_count and self.good_hold_count > self.bad_hold_count:
-                self.level_passed = True
-            else:
-                self.level_passed = False
-
-            if self.points >= 4 and self.level_passed:
-                self.completed = True
-
-            self.state = 'finished'
+            self.finished_practice()
     
     def show_next_button(self):
         return self.completed
@@ -208,6 +199,7 @@ class practiceScreen(baseScreen):
                 'duration' : self.note_definitions[note]["duration"],
                 "hit_time": current_time,
                 "hit": False,
+                "is_rest": "rest" in note,
             })
             
             current_time += self.note_definitions[note]["duration"] * self.ms_per_beat
@@ -219,13 +211,45 @@ class practiceScreen(baseScreen):
                 'duration' : self.note_definitions[note]["duration"],
                 "hit_time": current_time,
                 "hit": False,
+                "is_rest": "rest" in note,
                 })
 
                 current_time += self.note_definitions[note]["duration"] * self.ms_per_beat
+    
+    def update(self):
+        if self.state != "practice":
+            return
+
+        if self.current_note >= len(self.active_notes):
+            return
+
+        note = self.active_notes[self.current_note]
+
+        if note["is_rest"]:
+            now = pygame.time.get_ticks() - self.timer_start
+            end_time = note["hit_time"] + note["duration"] * self.ms_per_beat
+
+            if now >= end_time:
+                self.current_note += 1
+
+                if self.current_note >= len(self.active_notes):
+                    self.finished_practice()
+
+    def finished_practice(self):
+        if self.perfect_count + self.good_count > self.miss_count and self.good_hold_count > self.bad_hold_count:
+            self.level_passed = True
+        else:
+            self.level_passed = False
+
+        if self.points >= 4 and self.level_passed:
+            self.completed = True
+
+        self.state = 'finished'
 
     def draw(self):
         self.draw_layout() #draw text
-        
+        self.update()
+
         if self.state == 'start':
             line_width = width*(97/108)
             lines = wrap_text(self.data["text"], self.font, line_width)
