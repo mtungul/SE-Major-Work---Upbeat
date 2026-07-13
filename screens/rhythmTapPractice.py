@@ -219,7 +219,7 @@ class practiceScreen(baseScreen):
 
                 current_time += self.note_definitions[note]["duration"] * self.ms_per_beat
     
-    def update(self):
+    def update_screen(self):
         if self.state != "practice":
             return
 
@@ -251,7 +251,7 @@ class practiceScreen(baseScreen):
 
     def draw(self):
         self.draw_layout() #draw text
-        self.update()
+        self.update_screen()
 
         if self.state == 'start':
             line_width = width*(97/108)

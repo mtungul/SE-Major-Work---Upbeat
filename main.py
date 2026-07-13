@@ -29,6 +29,9 @@ while run:
         new_screen = current_screen.handle_event(event)
         if new_screen:
             current_screen = new_screen
+    
+    if hasattr(current_screen, 'update'):
+        current_screen.update()
 
     current_screen.draw()
 

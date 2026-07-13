@@ -179,8 +179,10 @@ levels = [
     'order' : 9,
     'lessonType' : 'lesson',
     'title' : 'Tempo',
-    'text' : 'Tempo is the speed of a musical piece, and is it measured in beats per minute (BPM). There are different Italian terms used to describe the different tempo in each piece. They are determined by a range of BPM - however, the range of BPM may differ between musicians, thus tempo names are interpreted from its "feel".',
+    'text' : 'Tempo is the speed of a musical piece, and is it measured in beats per minute (BPM). There are different Italian terms used to describe the different tempo in each piece, and they are determined by a range of BPM - however, the range of BPM may differ between musicians, thus tempo names are interpreted from its "feel".',
     'icon' : 'lesson',
+    'metronome' : True,
+    'img' : 'tempo_markings.png',
     },
 
     { # level 9
@@ -188,8 +190,15 @@ levels = [
     'order' : 10,
     'lessonType' : 'rhythmTapPractice',
     'title' : 'Final Practice',
-    'text' : '',
+    'text' : 'To wrap everything up, you will combine the four different lesson about notes, rests, time signature, and tempo! After clicking Begin, you will hear a four beat count in. Click the space bar to match the rhythm of the notes on the screen. Good Luck!',
     'icon' : 'quaver',
+    'notes_easy' : ['crotchet', 'crotchet', 'crotchet', 'crotchet_rest', 'minim_rest', 'minim'],
+    'notes_med' : ['crotchet', 'crotchet', 'crotchet_rest', 'quavers', 'minim_rest'],
+    'notes_hard' : ['crotchet', 'crotchet_rest', 'minim', 'quavers', 'quavers', 'semibreve_rest'],
+    'num_notes_easy' : '6',
+    'num_notes_med' : '5',
+    'num_notes_hard' : '6',
+    'bpm' : 70,
     },
 
     { # level 10
@@ -210,7 +219,7 @@ class levelRunner:
             return level['order']
         self.steps = sorted(level_data, key=get_order)
         self.screen = screen
-        self.index = 7
+        self.index = 8
         self.completed = [False] * len(self.steps) #sets all levels to current incomplete (array of 10 Falses)
         self.max_unlocked = 0
         self.icons = icons

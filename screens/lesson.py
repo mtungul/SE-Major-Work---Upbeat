@@ -1,10 +1,11 @@
 import os
 import pygame
+from metronome import metronome
 from startScreen import Button
 from utils.text import wrap_text
 from utils.config import width, height
-from screens.baseScreen import baseScreen
 from utils.excerpts import excerptPlayer
+from screens.baseScreen import baseScreen
 
 class lessonScreen(baseScreen):
     def __init__(self, screen, step_data, runner, icons):
@@ -39,19 +40,29 @@ class lessonScreen(baseScreen):
 
         for i, excerpt in enumerate(self.excerpts):
 
-            button = Button(width*(13/25), height*(11/20) + i * 120, self.playButton, (50, 50), lambda e=excerpt: self.audio.play(e)) #lambda etc. makes sure each sound is played besides just the last one
+            button = Button(width*(0.52), height*(0.55) + i * 120, self.playButton, (50, 50), lambda e=excerpt: self.audio.play(e)) #lambda etc. makes sure each sound is played besides just the last one
             image = self.excerpt_images[i]
             self.excerpt_items.append({
                 "button": button,
                 "image": image
             })
 
+        self.metronome = None
+        if self.data.get('metronome'):
+            self.metronome = metronome((width*(0.72), height*(0.66)), (160,30), 120, 20, 200)
+
     def handle_event(self, event):
-        
         for item in self.excerpt_items:
             item["button"].handle_event(event)
+
+        if self.metronome:
+            self.metronome.handle_event(event)
             
         return super().handle_event(event)
+    
+    def update(self):
+        if self.metronome:
+            self.metronome.update()
 
     def draw(self):
         self.draw_layout() #inherited from baseScreen
@@ -68,7 +79,7 @@ class lessonScreen(baseScreen):
 
         #images
         if self.lesson_image:
-            if self.excerpt_items:
+            if self.excerpt_items or self.metronome:
                 self.screen.blit(self.lesson_image, (width/12, y + 5))
             else:
                 lesson = self.data.get("order")
@@ -80,13 +91,18 @@ class lessonScreen(baseScreen):
                     self.screen.blit(self.lesson_image, (width/7, y + 5))
 
         #listening excerpts
-        for item in self.excerpt_items:
-            button = item["button"]
-            image = item["image"]
+        if self.excerpt_items:
+            for item in self.excerpt_items:
+                button = item["button"]
+                image = item["image"]
 
-            button.draw(self.screen)
+                button.draw(self.screen)
 
-            image_x = button.rect.x + 80
-            image_y = button.rect.y - 20
+                image_x = button.rect.x + 80
+                image_y = button.rect.y - 20
 
-            self.screen.blit(image, (image_x, image_y))
+                self.screen.blit(image, (image_x, image_y))
+
+        if self.metronome:
+            self.metronome.draw(self.screen)
+        
