@@ -11,6 +11,7 @@ class practiceScreen(baseScreen):
         super().__init__(screen, step_data, runner, icons)
         self.completed = False
         self.state = 'start'
+        self.total_questions = 0
         
         #buttons
         self.beginButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'begin_btn.png')).convert_alpha()
@@ -31,6 +32,9 @@ class practiceScreen(baseScreen):
             new_screen = self.begin_button.handle_event(event)
             if new_screen:
                 return new_screen
+            new_screen = self.back_button.handle_event(event)
+            if new_screen:
+                return new_screen
             return None
         
         elif self.state == "practice":
@@ -47,6 +51,7 @@ class practiceScreen(baseScreen):
                         self.wrong_answers.append(question_index)
 
                     self.current_question += 1
+                    self.total_questions += 1
 
                     if self.current_question < len(self.questions_to_ask):
                         self.load_question()
@@ -149,6 +154,18 @@ class practiceScreen(baseScreen):
         elif self.state == 'finished':
             if self.current_score == 6:
                 self.completed = True
+
+            line_width = width*(97/108)
+            lines = wrap_text("You have completed all 6 questions! Click NEXT to proceed to the next level.", self.font, line_width)
+
+            y = height/3
+            for line in lines:
+                text = self.font.render(line, True, (0, 0, 0))
+                self.screen.blit(text, (width/18, y))
+                y += 40
+            accuracy = round(6/self.total_questions*100)
+            accuracy_text = self.font.render(f"Overall Score and Accuracy: 6/{self.total_questions} ({accuracy}%)", True, (0, 0, 0))
+            self.screen.blit(accuracy_text, (width/18, y + 10))
 
 class answerButton():
     def __init__(self, letter, x, y, width, height):

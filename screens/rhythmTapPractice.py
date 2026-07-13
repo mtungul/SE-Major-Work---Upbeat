@@ -59,8 +59,11 @@ class practiceScreen(baseScreen):
             new_screen = self.begin_button.handle_event(event)
             if new_screen:
                 return new_screen
+            new_screen = self.back_button.handle_event(event)
+            if new_screen:
+                return new_screen
             return None
-        
+
         elif self.state == 'practice':
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 self.note_channel.play(self.note_sound, loops=-1)
