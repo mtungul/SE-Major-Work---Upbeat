@@ -16,6 +16,10 @@ class practiceScreen(baseScreen):
         self.level_passed = False
         self.level_text = None
         self.save = load_save()
+        self.bpm = 60
+        self.accuracy = 0 #for percentage
+        self.accuracy_text = ""
+        self.accuracy_colour = (0, 0, 0)
 
         self.beginButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'begin_btn.png')).convert_alpha()
         self.begin_button = Button(width*(31/72), height/2, self.beginButton, (width*(5/36), height*(1/10)), self.generate_notes)
@@ -24,24 +28,33 @@ class practiceScreen(baseScreen):
         self.nextLevelButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'next_button.png')).convert_alpha()
         self.next_level_button = Button(width*(43/72), height*(0.75), self.nextLevelButton, (width*(5/36), height*(1/10)), self.next_level)
 
-        #load and resize note and rest images
-        crotchet_img = pygame.image.load(os.path.join(os.getcwd(),'img', 'crotchet.png')).convert_alpha()
-        crotchet_rest_img = pygame.image.load(os.path.join(os.getcwd(),'img', 'crotchet_rest.png')).convert_alpha()
-        quavers_img = pygame.image.load(os.path.join(os.getcwd(),'img', 'quavers.png')).convert_alpha()
-        minim_img = pygame.image.load(os.path.join(os.getcwd(),'img', 'minim.png')).convert_alpha()
-        minim_rest_img = pygame.image.load(os.path.join(os.getcwd(),'img', 'minim_rest.png')).convert_alpha()
-        semibreve_img = pygame.image.load(os.path.join(os.getcwd(),'img', 'semibreve.png')).convert_alpha()
-        semibreve_rest_img = pygame.image.load(os.path.join(os.getcwd(),'img', 'semibreve_rest.png')).convert_alpha()
+        #load note and rest images
+        og_crotchet_img = pygame.image.load(os.path.join(os.getcwd(),'img', 'crotchet.png')).convert_alpha()
+        og_crotchet_rest_img = pygame.image.load(os.path.join(os.getcwd(),'img', 'crotchet_rest.png')).convert_alpha()
+        og_quavers_img = pygame.image.load(os.path.join(os.getcwd(),'img', 'quavers.png')).convert_alpha()
+        og_minim_img = pygame.image.load(os.path.join(os.getcwd(),'img', 'minim.png')).convert_alpha()
+        og_minim_rest_img = pygame.image.load(os.path.join(os.getcwd(),'img', 'minim_rest.png')).convert_alpha()
+        og_semibreve_img = pygame.image.load(os.path.join(os.getcwd(),'img', 'semibreve.png')).convert_alpha()
+        og_semibreve_rest_img = pygame.image.load(os.path.join(os.getcwd(),'img', 'semibreve_rest.png')).convert_alpha()
+
+        #resize images -> original image sizes were * by 0.75
+        crotchet_img = pygame.transform.smoothscale(og_crotchet_img, (75, 150))
+        crotchet_rest_img = pygame.transform.smoothscale(og_crotchet_rest_img, (75, 150))
+        quavers_img = pygame.transform.smoothscale(og_quavers_img, (150, 150))
+        minim_img = pygame.transform.smoothscale(og_minim_img, (113, 150))
+        minim_rest_img = pygame.transform.smoothscale(og_minim_rest_img, (75, 150))
+        semibreve_img = pygame.transform.smoothscale(og_semibreve_img, (120, 150))
+        semibreve_rest_img = pygame.transform.smoothscale(og_semibreve_rest_img, (75, 150))
 
         #define notes in a nested dictionary
         self.note_definitions = {
-            'crotchet' : {'image': crotchet_img, 'duration': 1.0},
-            'crotchet_rest' : {'image': crotchet_rest_img, 'duration': 1.0},
-            'quavers' : {'image': quavers_img, 'duration': 0.5},
-            'minim' : {'image': minim_img, 'duration': 2.0},
-            'minim_rest' : {'image': minim_rest_img, 'duration': 2.0},
-            'semibreve' : {'image': semibreve_img, 'duration': 4.0},
-            'semibreve_rest' : {'image': semibreve_rest_img, 'duration': 4.0},
+            'crotchet' : {'image': crotchet_img, 'duration': 1.0, 'beats': 1, 'width' : 75},
+            'crotchet_rest' : {'image': crotchet_rest_img, 'duration': 1.0, 'beats': 1, 'width' : 75},
+            'quavers' : {'image': quavers_img, 'duration': 0.5, 'beats': 1, 'width' : 150},
+            'minim' : {'image': minim_img, 'duration': 2.0, 'beats': 2, 'width' : 113},
+            'minim_rest' : {'image': minim_rest_img, 'duration': 2.0, 'beats': 2, 'width' : 75},
+            'semibreve' : {'image': semibreve_img, 'duration': 4.0, 'beats': 4, 'width' : 120},
+            'semibreve_rest' : {'image': semibreve_rest_img, 'duration': 4.0, 'beats': 4, 'width' : 75},
         }
 
         #note sounds
@@ -70,9 +83,11 @@ class practiceScreen(baseScreen):
         elif self.state == 'practice':
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 self.note_channel.play(self.note_sound, loops=-1)
-                self.check_hit_start()
+                if not self.active_notes[self.current_note]['is_rest']:
+                    self.check_hit_start()
             if event.type == pygame.KEYUP and event.key == pygame.K_SPACE:
-                self.check_hit_end()
+                if not self.active_notes[self.current_note]['is_rest']:
+                    self.check_hit_end()
                 self.note_channel.stop()
             return None  #ignore all input by mouse and only take in input by space bar so user cannot reset the notes mid practice
 
@@ -102,17 +117,19 @@ class practiceScreen(baseScreen):
         self.press_time = now
         self.is_holding = True #flag for check_hit_end
 
-        if difference <= 100:
-            print("Perfect!")
-            #write the text that displays the users accuracy
+        if difference <= 200:
             self.perfect_count += 1
-        elif difference <= 200:
-            print("Good!")
+            self.accuracy_text = "Perfect!"
+            self.accuracy_colour = (0, 150, 0)
+        elif difference <= 300:
             self.good_count += 1
+            self.accuracy_text = "Good!"
+            self.accuracy_colour = (150, 150, 0)
         else:
-            print("Miss")
             self.miss_count += 1
-   
+            self.accuracy_text = "Miss"
+            self.accuracy_colour = (150, 0, 0)
+
     def check_hit_end(self):
         if not self.is_holding: #don't check end time if a key has not been pressed initially
             return
@@ -121,12 +138,14 @@ class practiceScreen(baseScreen):
         held_time = release_time - self.press_time
         expected_hold = self.active_notes[self.current_note]["duration"] * self.ms_per_beat
 
-        if abs(held_time - expected_hold) <= 500:
-            print('Good hold')
+        if abs(held_time - expected_hold) <= 650:
             self.good_hold_count += 1
+            self.accuracy_text = "Good hold!"
+            self.accuracy_colour = (0, 150, 0)
         else:
-            print('Bad hold')
             self.bad_hold_count += 1
+            self.accuracy_text = "Bad hold"
+            self.accuracy_colour = (150, 0, 0)
 
         self.is_holding = False
         self.current_note += 1
@@ -156,62 +175,66 @@ class practiceScreen(baseScreen):
         self.draw_layout() #cover current text
         self.reset_scores()
 
-        self.timer_start = pygame.time.get_ticks() + 4000
-        self.current_note = 0
-
-        start_x = width/8
-        space = 180
-        y = height/2
+        start_x = width*(0.15)
+        y = height*(0.41)
 
         if self.points <= 1:
             notes = self.data["notes_easy"] 
             num_notes = int(self.data["num_notes_easy"])
             level = self.font.render("Difficulty: Easy", True, (0, 0, 0))
-            bpm = self.data["bpm_easy"]
+            self.bpm = self.data["bpm_easy"]
         elif self.points <= 3:
             notes = self.data["notes_med"]
             num_notes = int(self.data["num_notes_med"])
             level = self.font.render("Difficulty: Medium", True, (0, 0, 0))
-            bpm = self.data["bpm_med"]
+            self.bpm = self.data["bpm_med"]
         else:
-            start_x = width/13
-            space = 170
             notes = self.data["notes_hard"]
             num_notes = int(self.data["num_notes_hard"])
             level = self.font.render("Difficulty: Hard", True, (0, 0, 0))
-            bpm = self.data["bpm_hard"]
+            self.bpm = self.data["bpm_hard"]
 
         #4 beat count in at x bpm
-        count_in = pygame.mixer.Sound(f"soundExcerpts/{bpm}bpm.mp3")
+        current_time = 0
+        self.ms_per_beat = 60000/self.bpm
+        self.timer_start = pygame.time.get_ticks() + (4 * self.ms_per_beat)
+        
+        count_in = pygame.mixer.Sound(f"soundExcerpts/{self.bpm}bpm.mp3")
         count_in.play()
+
+        self.current_note = 0
 
         self.level_text = level
         displayed_notes = random.sample(notes, k=num_notes) #array of random notes
         self.active_notes = [] #empty array
 
-        current_time = 0
-        self.ms_per_beat = 60000/bpm
 
-        for i, note in enumerate(displayed_notes):
-            x = start_x + (i * space)
+        current_x = 0
+        for note in displayed_notes:
+            x = start_x + current_x
 
             self.active_notes.append({
                 'image' : self.note_definitions[note]['image'],
-                'position': (x, y),
+                'position' : (x, y),
                 'duration' : self.note_definitions[note]["duration"],
-                "hit_time": current_time,
-                "is_rest": "rest" in note,
+                'hit_time' : current_time,
+                'is_rest' : 'rest' in note,
+                'beats' : self.note_definitions[note]['beats'],
+                'width' : self.note_definitions[note]['width'],
             })
             
+            current_x += self.note_definitions[note]["width"]
             current_time += self.note_definitions[note]["duration"] * self.ms_per_beat
 
-            if note == 'quavers': #since quavers are 2 consecutive beats with one image they need special consideration 
+            if note == 'quavers': #since quavers are 2 consecutive beats with one image they need special consideration (gets added twice) 
                 self.active_notes.append({
                 'image' : None,
-                'position': None,
+                'position' : None,
                 'duration' : self.note_definitions[note]["duration"],
-                "hit_time": current_time,
-                "is_rest": "rest" in note,
+                'hit_time' : current_time,
+                'is_rest' : "rest" in note,
+                'beats' : 0,
+                'width' : 0,
                 })
 
                 current_time += self.note_definitions[note]["duration"] * self.ms_per_beat
@@ -226,6 +249,7 @@ class practiceScreen(baseScreen):
         note = self.active_notes[self.current_note]
 
         if note["is_rest"]:
+            self.accuracy_text = ''
             now = pygame.time.get_ticks() - self.timer_start
             end_time = note["hit_time"] + note["duration"] * self.ms_per_beat
 
@@ -236,7 +260,8 @@ class practiceScreen(baseScreen):
                     self.finished_practice()
 
     def finished_practice(self):
-        if self.perfect_count + self.good_count > self.miss_count and self.good_hold_count > self.bad_hold_count:
+        self.accuracy = round((self.perfect_count + self.good_count + self.good_hold_count) / (self.perfect_count + self.good_count + self.good_hold_count + self.miss_count + self.bad_hold_count)*100)
+        if self.accuracy >= 75: #can only pass if user gets 75% or over
             self.level_passed = True
         else:
             self.level_passed = False
@@ -247,6 +272,34 @@ class practiceScreen(baseScreen):
             self.save = load_save()
 
         self.state = 'finished'
+
+    def draw_stave(self): #only for the last practice level
+        #one line stave
+        y = height/2 + 50
+        pygame.draw.line(self.screen, (0,0,0), (width*(0.08), y), (width*(0.9), y), 3)
+
+        #percussion cleff
+        pygame.draw.line(self.screen, (0,0,0), (width*(0.08), y - 20), (width*(0.08), y + 20), 5)
+        pygame.draw.line(self.screen, (0,0,0), (width*(0.08) + 10, y - 20), (width*(0.08) + 10, y + 20), 5)
+
+        #time signature
+        ts_font = pygame.font.Font('fonts/new_amsterdam/NewAmsterdam.ttf', 80)
+        ts_text = ts_font.render("4", True, (0, 0, 0))
+        self.screen.blit(ts_text, (width*(0.1), y - 90))
+        self.screen.blit(ts_text, (width*(0.1), y))
+
+        #bar lines
+        beats = 0
+        for note in self.active_notes:
+            beats += note["beats"]
+            if beats == 4:
+                if note['position'] is not None: #needed cuz 2nd quaver's position is None
+                    x = note["position"][0] + note["width"]
+                    pygame.draw.line(self.screen, (0,0,0), (x, y - 50), (x, y + 40), 3)
+                beats = 0
+        #bpm
+        bpm_text = self.font.render(f"Bpm = {self.bpm}", True, (0, 0, 0))
+        self.screen.blit(bpm_text, (width*(0.08), height*(0.35)))
 
     def draw(self):
         self.draw_layout() #draw text
@@ -271,6 +324,13 @@ class practiceScreen(baseScreen):
             if self.level_text:
                 self.screen.blit(self.level_text, (width*(0.8), height*(0.25)))
 
+            if self.accuracy_text:
+                text = self.font.render(self.accuracy_text, True, self.accuracy_colour)
+                self.screen.blit(text, (width * 0.45, height * 0.25))
+            
+            if self.data['order'] == 10:
+                self.draw_stave()
+
             for i, note in enumerate(self.active_notes):
                 img = note["image"]
                 pos = note["position"]
@@ -289,6 +349,8 @@ class practiceScreen(baseScreen):
                 self.next_level_button.draw(self.screen)
             title_font = pygame.font.Font('fonts/new_amsterdam/NewAmsterdam.ttf', 40)
             text_font = pygame.font.Font('fonts/new_amsterdam/NewAmsterdam.ttf', 35)
+
+            self.accuracy_text = ''
 
             #define all text for score screen
             perfect_text = text_font.render("Perfect", True, (0, 150, 0))
@@ -328,8 +390,5 @@ class practiceScreen(baseScreen):
             self.screen.blit(good_hold_num, (width*(1/3), height*(0.63)))
             self.screen.blit(bad_hold_num, (width*(2/3), height*(0.63)))
 
-            accuracy = round((self.perfect_count + self.good_count + self.good_hold_count)/(self.perfect_count + self.good_count + self.good_hold_count + self.miss_count + self.bad_hold_count)*100)
-            accuracy_text = text_font.render(f"Overall Accuracy: {accuracy}%", True, (0, 0, 0))
+            accuracy_text = text_font.render(f"Overall Accuracy: {self.accuracy}%", True, (0, 0, 0))
             self.screen.blit(accuracy_text, (width*(0.41), height*(0.7)))
-
-

@@ -44,7 +44,7 @@ class lessonScreen(baseScreen):
             image = self.excerpt_images[i]
             self.excerpt_items.append({
                 "button": button,
-                "image": image
+                "image": image,
             })
 
         self.metronome = None

@@ -4,7 +4,9 @@ levels = [
     'order' : 1,
     'lessonType' : 'reading',
     'title' : 'What is Rhythm?',
-    'text' : 'In music, "rhythm" accounts for the timing and feel of a piece. It consists of the placement and duration of sounds or silences. In this section of UPBEAT you will learn about the different note values, time signatures, and tempo markings.',
+    'text' : (
+        "In music, 'rhythm' accounts for the timing and feel of a piece. It consists of the placement and duration of sounds or silences. "
+        "In this section of UPBEAT you will learn about the different note values, time signatures, and tempo markings."),
     'img' : None,
     'icon' : 'book',
     },
@@ -14,7 +16,10 @@ levels = [
     'order' : 2,
     'lessonType' : 'lesson',
     'title' : 'Subdivisions and Note Values',
-    'text' : 'Subdivisions are how a beat is divided into a certain number of equal notes. Note values represent the duration of that note and are relative to the tempo (speed) of the music. The graph below shows the most common note values used, and how many of each equate to one semibreve (has the largest duration).',
+    'text' : (
+        'Subdivisions are how a beat is divided into a certain number of equal notes. '
+        'Note values represent the duration of that note and are relative to the tempo (speed) of the music. '
+        'The graph below shows the most common note values used, and how many of each equate to one semibreve (has the largest duration).'),
     'img' : 'note_value_chart.png',
     'icon' : 'lesson',
     'excerpts' : [
@@ -50,7 +55,9 @@ levels = [
     'order' : 4,
     'lessonType' : 'lesson',
     'title' : 'Rest Notes',
-    'text' : 'Music is the art of both sound AND silence. As important as it is knowing when to play, it is also important to know when NOT to play. "Rests" are notes that tell us when to not play. Similarly to the previous lesson, there are different note values for each rest.',
+    'text' : (
+        "Music is the art of both sound AND silence. As important as it is knowing when to play, it is also important to know when NOT to play. "
+        "'Rests' are notes that tell us when to not play. Similarly to the previous lesson, there are different note values for each rest."),
     'img' : 'rest_value_chart.png',
     'icon' : 'lesson',
     'excerpts' : [
@@ -68,7 +75,10 @@ levels = [
     'order' : 5,
     'lessonType' : 'rhythmTapPractice',
     'title' : 'Rest Notes Practice',
-    'text' : 'Now you will get to practice playing both sound and silence. After clicking Begin, you will hear a four beat count in. Click the space bar to match the rhythm of the notes on the screen. TIP: Make sure not to press the space bar on a rest note, instead always keep counting to ensure you get the next note on time!',
+    'text' : (
+        'Now you will get to practice playing both sound and silence. After clicking Begin, you will hear a four beat count in. '
+        'Click the space bar to match the rhythm of the notes on the screen. TIP: Make sure not to press the space bar on a rest note, '
+        'instead always keep counting to ensure you get the next note on time!'),
     'icon' : 'quaver',
     'notes_easy' : ['crotchet', 'crotchet', 'crotchet', 'crotchet_rest', 'minim_rest', 'minim'],
     'notes_med' : ['crotchet', 'crotchet', 'crotchet_rest', 'quavers', 'minim_rest'],
@@ -86,7 +96,9 @@ levels = [
     'order' : 6,
     'lessonType' : 'lesson',
     'title' : 'Time Signatures',
-    'text' : 'A time signature is the musical notation that dictates the pulse and rhythmic feel of a piece. It lets us know how to count before we start playing. Below is a diagram of the different parts of reading sheet music.',
+    'text' : (
+        'A time signature is the musical notation that dictates the pulse and rhythmic feel of a piece. '
+        'It lets us know how to count before we start playing. Below is a diagram of the different parts of reading sheet music.'),
     'img' : 'stave_chart.png',
     'icon' : 'lesson',
     },
@@ -106,7 +118,9 @@ levels = [
     'order' : 8,
     'lessonType' : 'questionPractice',
     'title' : 'Time Signature Practice',
-    'text' : "After clicking Begin, you will be asked 6 multiple choice questions about Time Signatures. Answer them all correctly to proceed to the next level. NOTE: Don't worry if you get a question wrong, you will be able to re-answer them again!",
+    'text' : (
+        "After clicking Begin, you will be asked 6 multiple choice questions about Time Signatures. "
+        "Answer them all correctly to proceed to the next level. NOTE: Don't worry if you get a question wrong, you will be able to re-answer them again!"),
     'icon' : 'quaver',
     'questions' : [
         {
@@ -183,7 +197,11 @@ levels = [
     'order' : 9,
     'lessonType' : 'lesson',
     'title' : 'Tempo',
-    'text' : 'Tempo is the speed of a musical piece, and is it measured in beats per minute (BPM). There are different Italian terms used to describe the different tempo in each piece, and they are determined by a range of BPM - however, the range of BPM may differ between musicians, thus tempo names are interpreted from its "feel".',
+    'text' : (
+        'Tempo is the speed of a musical piece, and is it measured in beats per minute (BPM). '
+        'There are different Italian terms used to describe the different tempo in each piece, '
+        'and they are determined by a range of BPM - however, the range of BPM may differ between musicians, '
+        'thus tempo names are interpreted from its "feel".'),
     'icon' : 'lesson',
     'metronome' : True,
     'img' : 'tempo_markings.png',
@@ -194,17 +212,19 @@ levels = [
     'order' : 10,
     'lessonType' : 'rhythmTapPractice',
     'title' : 'Final Rhythm Practice',
-    'text' : 'To wrap everything up, you will combine the four different lesson about notes, rests, time signature, and tempo! After clicking Begin, you will hear a four beat count in. Click the space bar to match the rhythm of the notes on the screen. Good Luck!',
+    'text' : (
+        'To wrap everything up, you will combine the four different lesson about notes, rests, time signature, and tempo! '
+        'After clicking Begin, you will hear a four beat count in. Click the space bar to match the rhythm of the notes on the screen. Good Luck!'),
     'icon' : 'quaver',
-    'notes_easy' : ['crotchet', 'crotchet', 'crotchet', 'quaver', 'quaver', 'crotchet_rest', 'crotchet_rest', 'crotchet_rest'],
-    'notes_med' : ['minim', 'minim', 'minim', 'minim_rest', 'minim_rest', 'minim_rest'],
-    'notes_hard' : ['crotchet', 'crotchet_rest', 'minim', 'quavers', 'quavers', 'semibreve_rest'],
-    'num_notes_easy' : '8',
-    'num_notes_med' : '6',
-    'num_notes_hard' : '6',
-    'bpm_easy' : 70,
+    'notes_easy' : ['minim', 'minim', 'minim_rest', 'minim', 'minim_rest', 'minim'],
+    'notes_med' : ['crotchet', 'crotchet', 'crotchet', 'crotchet', 'quavers', 'crotchet_rest', 'crotchet_rest', 'crotchet_rest'],
+    'notes_hard' : ['crotchet', 'crotchet', 'crotchet', 'quavers', 'quavers', 'quavers', 'crotchet_rest', 'crotchet_rest'],
+    'num_notes_easy' : '6',
+    'num_notes_med' : '8',
+    'num_notes_hard' : '8',
+    'bpm_easy' : 60,
     'bpm_med' : 50,
-    'bpm_hard' : 60,
+    'bpm_hard' : 70,
     },
 
     { # level 10
@@ -212,7 +232,7 @@ levels = [
     'order' : 11,
     'lessonType' : 'end',
     'title' : 'Rhythm Section Complete!',
-    'text' : '',
+    'text' : 'Good job!',
     'icon' : 'star',
     }
 ]

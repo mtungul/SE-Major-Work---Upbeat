@@ -1,5 +1,4 @@
 import os
-import json
 import pygame
 from startScreen import mainScreen 
 from utils.icons import Icons

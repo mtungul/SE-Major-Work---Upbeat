@@ -39,7 +39,8 @@ class levelRunner:
         #after completing all the levels go back to home page
         if self.index >= len(self.steps):
             from startScreen import mainScreen
-            return mainScreen(self.screen)
+            self.index = 0
+            return mainScreen(self.screen, self.icons)
 
         return self.get_current_screen()
 

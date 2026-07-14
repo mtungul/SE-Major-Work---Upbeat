@@ -1,6 +1,6 @@
 import os
 import pygame
-from startScreen import Button
+from startScreen import Button, mainScreen
 from utils.icons import tint_icon 
 from utils.config import width, height
 
@@ -16,8 +16,13 @@ class baseScreen:
         #load and size buttons
         self.nextButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'next_button.png')).convert_alpha()
         self.backButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'back_button.png')).convert_alpha()
-        self.next_button = Button(width*(85/108), height*(53/60), self.nextButton, (width*(5/36), height*(1/10)), self.go_next)
-        self.back_button = Button(width*(7/108), height*(53/60), self.backButton, (width*(5/36), height*(1/10)), self.go_back)
+        self.next_button = Button(width*(0.79), height*(0.88), self.nextButton, (width*(0.14), height*(0.1)), self.go_next)
+        self.back_button = Button(width*(0.06), height*(0.88), self.backButton, (width*(0.14), height*(0.1)), self.go_back)
+        
+        self.backHomeButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'back_to_home.png')).convert_alpha()
+        self.back_home_button = Button(width*(0.72), height*(0.89), self.backHomeButton, (width*(0.21), height*(0.085)), lambda: mainScreen(self.screen, self.icons))
+        self.homeBtn = pygame.image.load(os.path.join(os.getcwd(),'img', 'home.png')).convert_alpha()
+        self.home_button = Button(width*(0.94), height*(0.01), self.homeBtn, (width*(0.06), height*(0.09)), lambda: mainScreen(self.screen, self.icons))
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -33,6 +38,14 @@ class baseScreen:
             return new_screen
         
         new_screen = self.back_button.handle_event(event)
+        if new_screen:
+            return new_screen
+        
+        new_screen = self.back_home_button.handle_event(event)
+        if new_screen:
+            return new_screen
+        
+        new_screen = self.home_button.handle_event(event)
         if new_screen:
             return new_screen
 
@@ -70,8 +83,6 @@ class baseScreen:
     def go_back(self):
         return self.runner.back_level()
 
-    def show_next_button(self):
-        return True
     
     def draw_layout(self):
         self.draw_icon_row()
@@ -84,8 +95,13 @@ class baseScreen:
         self.screen.blit(title, (width/18, height*(7/30)))
 
         #next and back buttons
-        if self.show_next_button(): #makes it easier to overide in practice.py
+        if self.runner.index == 10: #'back to home' button after last level of rhythm section
+            self.back_home_button.draw(self.screen)  
+        else:
             self.next_button.draw(self.screen)  
 
         if self.runner.index != 0:
             self.back_button.draw(self.screen)
+
+        #home button
+        self.home_button.draw(self.screen)
