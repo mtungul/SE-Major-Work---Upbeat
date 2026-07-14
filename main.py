@@ -1,5 +1,6 @@
-import pygame
 import os
+import json
+import pygame
 from startScreen import mainScreen 
 from utils.icons import Icons
 from utils.config import width, height
@@ -9,6 +10,7 @@ pygame.init()
 #set screen size and title
 pygame.display.set_caption("software engineering project")
 screen = pygame.display.set_mode((width, height))
+clock = pygame.time.Clock()
 
 #set background (doesn't change)
 background = pygame.image.load(os.path.join(os.getcwd(),'img', 'background.png')).convert_alpha()
@@ -36,5 +38,6 @@ while run:
     current_screen.draw()
 
     pygame.display.update()
+    clock.tick(60)
 
 pygame.quit()

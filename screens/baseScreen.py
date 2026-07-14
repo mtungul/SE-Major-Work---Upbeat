@@ -1,7 +1,6 @@
 import os
 import pygame
 from startScreen import Button
-from utils.text import wrap_text
 from utils.icons import tint_icon 
 from utils.config import width, height
 

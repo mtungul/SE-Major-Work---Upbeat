@@ -1,11 +1,11 @@
 import os
 import pygame
 import random
+from save import complete_lesson, load_save
 from startScreen import Button
 from utils.text import wrap_text
 from utils.config import width, height
 from screens.baseScreen import baseScreen
-
 
 class practiceScreen(baseScreen):
     def __init__(self, screen, step_data, runner, icons):
@@ -15,6 +15,7 @@ class practiceScreen(baseScreen):
         self.points = 0
         self.level_passed = False
         self.level_text = None
+        self.save = load_save()
 
         self.beginButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'begin_btn.png')).convert_alpha()
         self.begin_button = Button(width*(31/72), height/2, self.beginButton, (width*(5/36), height*(1/10)), self.generate_notes)
@@ -62,6 +63,8 @@ class practiceScreen(baseScreen):
             new_screen = self.back_button.handle_event(event)
             if new_screen:
                 return new_screen
+            if self.save['completed_lessons'].get(self.data['title'], False):
+                return self.next_button.handle_event(event)
             return None
 
         elif self.state == 'practice':
@@ -109,8 +112,6 @@ class practiceScreen(baseScreen):
         else:
             print("Miss")
             self.miss_count += 1
-
-        self.active_notes[self.current_note]["hit"] = True
    
     def check_hit_end(self):
         if not self.is_holding: #don't check end time if a key has not been pressed initially
@@ -132,9 +133,6 @@ class practiceScreen(baseScreen):
 
         if self.current_note >= len(self.active_notes):
             self.finished_practice()
-    
-    def show_next_button(self):
-        return self.completed
 
     def reset_scores(self):
         self.perfect_count = 0
@@ -146,12 +144,10 @@ class practiceScreen(baseScreen):
     def next_level(self):
         if self.level_passed:
             self.points += 2
-        else:
-            self.points -= 1
         
         if self.points > 5:
                 self.completed = True
-                return 
+                return
         
         self.generate_notes()
 
@@ -159,10 +155,6 @@ class practiceScreen(baseScreen):
         self.state = 'practice'
         self.draw_layout() #cover current text
         self.reset_scores()
-         
-        #4 beat count in at 60 bpm
-        count_in = pygame.mixer.Sound("soundExcerpts/60bpm.mp3")
-        count_in.play()
 
         self.timer_start = pygame.time.get_ticks() + 4000
         self.current_note = 0
@@ -175,23 +167,30 @@ class practiceScreen(baseScreen):
             notes = self.data["notes_easy"] 
             num_notes = int(self.data["num_notes_easy"])
             level = self.font.render("Difficulty: Easy", True, (0, 0, 0))
+            bpm = self.data["bpm_easy"]
         elif self.points <= 3:
             notes = self.data["notes_med"]
             num_notes = int(self.data["num_notes_med"])
             level = self.font.render("Difficulty: Medium", True, (0, 0, 0))
+            bpm = self.data["bpm_med"]
         else:
             start_x = width/13
             space = 170
             notes = self.data["notes_hard"]
             num_notes = int(self.data["num_notes_hard"])
             level = self.font.render("Difficulty: Hard", True, (0, 0, 0))
+            bpm = self.data["bpm_hard"]
+
+        #4 beat count in at x bpm
+        count_in = pygame.mixer.Sound(f"soundExcerpts/{bpm}bpm.mp3")
+        count_in.play()
 
         self.level_text = level
         displayed_notes = random.sample(notes, k=num_notes) #array of random notes
         self.active_notes = [] #empty array
 
         current_time = 0
-        self.ms_per_beat = 60000/self.data["bpm"] 
+        self.ms_per_beat = 60000/bpm
 
         for i, note in enumerate(displayed_notes):
             x = start_x + (i * space)
@@ -201,7 +200,6 @@ class practiceScreen(baseScreen):
                 'position': (x, y),
                 'duration' : self.note_definitions[note]["duration"],
                 "hit_time": current_time,
-                "hit": False,
                 "is_rest": "rest" in note,
             })
             
@@ -213,7 +211,6 @@ class practiceScreen(baseScreen):
                 'position': None,
                 'duration' : self.note_definitions[note]["duration"],
                 "hit_time": current_time,
-                "hit": False,
                 "is_rest": "rest" in note,
                 })
 
@@ -246,6 +243,8 @@ class practiceScreen(baseScreen):
 
         if self.points >= 4 and self.level_passed:
             self.completed = True
+            complete_lesson(self.data["title"])
+            self.save = load_save()
 
         self.state = 'finished'
 
@@ -264,6 +263,9 @@ class practiceScreen(baseScreen):
                 y += 40
             
             self.begin_button.draw(self.screen)  
+
+            if self.save['completed_lessons'].get(self.data['title'], False):
+                self.next_button.draw(self.screen)
 
         elif self.state == 'practice':
             if self.level_text:

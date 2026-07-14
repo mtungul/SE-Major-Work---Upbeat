@@ -4,7 +4,7 @@ levels = [
     'order' : 1,
     'lessonType' : 'reading',
     'title' : 'What is Rhythm?',
-    'text' : 'In music, "rhythm" accounts for the timing and feel of a piece. It consists of the placement and duration of sounds or silences. In this level of UPBEAT you will learn about the different note values, time signatures, and tempo markings.',
+    'text' : 'In music, "rhythm" accounts for the timing and feel of a piece. It consists of the placement and duration of sounds or silences. In this section of UPBEAT you will learn about the different note values, time signatures, and tempo markings.',
     'img' : None,
     'icon' : 'book',
     },
@@ -40,7 +40,9 @@ levels = [
     'num_notes_easy' : '6',
     'num_notes_med' : '5',
     'num_notes_hard' : '7',
-    'bpm' : 60,
+    'bpm_easy' : 60,
+    'bpm_med' : 60,
+    'bpm_hard' : 60,
     },
 
     { # level 4
@@ -74,7 +76,9 @@ levels = [
     'num_notes_easy' : '6',
     'num_notes_med' : '5',
     'num_notes_hard' : '6',
-    'bpm' : 60,
+    'bpm_easy' : 60,
+    'bpm_med' : 60,
+    'bpm_hard' : 60,
     },
 
     { # level 6
@@ -189,83 +193,26 @@ levels = [
     'section' : 'rhythm',
     'order' : 10,
     'lessonType' : 'rhythmTapPractice',
-    'title' : 'Final Practice',
+    'title' : 'Final Rhythm Practice',
     'text' : 'To wrap everything up, you will combine the four different lesson about notes, rests, time signature, and tempo! After clicking Begin, you will hear a four beat count in. Click the space bar to match the rhythm of the notes on the screen. Good Luck!',
     'icon' : 'quaver',
-    'notes_easy' : ['crotchet', 'crotchet', 'crotchet', 'crotchet_rest', 'minim_rest', 'minim'],
-    'notes_med' : ['crotchet', 'crotchet', 'crotchet_rest', 'quavers', 'minim_rest'],
+    'notes_easy' : ['crotchet', 'crotchet', 'crotchet', 'quaver', 'quaver', 'crotchet_rest', 'crotchet_rest', 'crotchet_rest'],
+    'notes_med' : ['minim', 'minim', 'minim', 'minim_rest', 'minim_rest', 'minim_rest'],
     'notes_hard' : ['crotchet', 'crotchet_rest', 'minim', 'quavers', 'quavers', 'semibreve_rest'],
-    'num_notes_easy' : '6',
-    'num_notes_med' : '5',
+    'num_notes_easy' : '8',
+    'num_notes_med' : '6',
     'num_notes_hard' : '6',
-    'bpm' : 70,
+    'bpm_easy' : 70,
+    'bpm_med' : 50,
+    'bpm_hard' : 60,
     },
 
     { # level 10
     'section' : 'rhythm',
     'order' : 11,
     'lessonType' : 'end',
-    'title' : 'You have successfully completed the Rhythm section!',
+    'title' : 'Rhythm Section Complete!',
     'text' : '',
     'icon' : 'star',
     }
 ]
-
-import pygame
-
-class levelRunner:
-    def __init__(self, screen, level_data, icons):
-        def get_order(level):
-            return level['order']
-        self.steps = sorted(level_data, key=get_order)
-        self.screen = screen
-        self.index = 8
-        self.completed = [False] * len(self.steps) #sets all levels to current incomplete (array of 10 Falses)
-        self.max_unlocked = 0
-        self.icons = icons
-
-    def get_current_screen(self):
-        step = self.steps[self.index]
-
-        if step["lessonType"] in ["reading", "lesson", "end"]: 
-            from screens.lesson import lessonScreen
-            return lessonScreen(self.screen, step, self, self.icons)
-
-        elif step["lessonType"] == "questionPractice":
-            from screens.questionPractice import practiceScreen
-            return practiceScreen(self.screen, step, self, self.icons)
-        
-        elif step["lessonType"] == "rhythmTapPractice":
-            from screens.rhythmTapPractice import practiceScreen
-            return practiceScreen(self.screen, step, self, self.icons)
-    
-    def next_level(self):
-        pygame.mixer.stop()
-        self.completed[self.index] = True #current level is considered as 'completed'
-
-        #set the max unlocked level to mark progress
-        if self.index + 1 > self.max_unlocked:
-            self.max_unlocked = self.index + 1
-
-        self.index += 1 #add one to go to next level
-
-        #after completing all the levels go back to home page
-        #later put a variable setting rhythm section completion to true to allow the user to acces the pitch section !!!!
-        if self.index >= len(self.steps):
-            from startScreen import mainScreen
-            return mainScreen(self.screen)
-
-        return self.get_current_screen()
-
-    def back_level(self):
-        pygame.mixer.stop()
-        self.index -= 1 #minus one to go back a level
-        return self.get_current_screen()
-    
-    def go_to_level(self, index):
-        pygame.mixer.stop()
-        if index <= self.max_unlocked: #only allow unlocked levels
-            self.index = index
-            return self.get_current_screen()
-
-        return None

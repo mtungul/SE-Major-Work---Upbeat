@@ -1,6 +1,7 @@
 import os
 import pygame
 import random
+from save import complete_lesson, load_save
 from utils.text import wrap_text
 from utils.config import width, height
 from startScreen import Button
@@ -18,9 +19,14 @@ class practiceScreen(baseScreen):
         self.begin_button = Button(width*(31/72), height/2, self.beginButton, (width*(5/36), height*(1/10)), self.start_quiz)
 
         self.answer_buttons = []
-        letters = ['A', 'B', 'C', 'D']
+
+        if self.data['section'] == 'rhythm':
+            answer_key = ['A', 'B', 'C', 'D']
+        elif self.data['section'] == 'pitch':
+            answer_key = ['1', '2', '3', '4']        
+            
         for i in range(4):
-            self.answer_buttons.append(answerButton(letters[i], width*(0.39) + i * 80, height*(0.72), 60, 60))
+            self.answer_buttons.append(answerButton(answer_key[i], width*(0.39) + i * 80, height*(0.72), 60, 60))
 
         #sound
         self.answer_channel = pygame.mixer.Channel(1)
@@ -35,6 +41,9 @@ class practiceScreen(baseScreen):
             new_screen = self.back_button.handle_event(event)
             if new_screen:
                 return new_screen
+            save = load_save()
+            if save['completed_lessons'].get(self.data['title'], False):
+                return self.next_button.handle_event(event)
             return None
         
         elif self.state == "practice":
@@ -72,9 +81,6 @@ class practiceScreen(baseScreen):
             return None
         
         return super().handle_event(event)
-
-    def show_next_button(self):
-        return self.completed
 
     def reset_quiz(self):
         self.current_question = 0
@@ -119,6 +125,10 @@ class practiceScreen(baseScreen):
             
             self.begin_button.draw(self.screen)  
 
+            save = load_save()
+            if save['completed_lessons'].get(self.data['title'], False):
+                self.next_button.draw(self.screen)
+
         elif self.state == 'practice':
             score = self.font.render("Your Score:" + str(self.current_score), True, (0, 0, 0))
             if score:
@@ -142,10 +152,13 @@ class practiceScreen(baseScreen):
             if self.question_image:
                 self.screen.blit(self.question_image, (width*(0.7), height*(0.38)))
 
-            letters = ['A', 'B', 'C', 'D']
+            if self.data['section'] == 'rhythm':
+                answer_key = ['A', 'B', 'C', 'D']
+            elif self.data['section'] == 'pitch':
+                answer_key = ['1', '2', '3', '4']
 
             for i in range(4):
-                answer_text = answer_font.render(f"{letters[i]}) {self.current_answer[i]['text']}", True, (0,0,0))
+                answer_text = answer_font.render(f"{answer_key[i]}) {self.current_answer[i]['text']}", True, (0,0,0))
                 self.screen.blit(answer_text, (width/18, height*(0.45 + i * 0.06)))
             
             for button in self.answer_buttons:
@@ -154,6 +167,7 @@ class practiceScreen(baseScreen):
         elif self.state == 'finished':
             if self.current_score == 6:
                 self.completed = True
+                complete_lesson(self.data["title"])
 
             line_width = width*(97/108)
             lines = wrap_text("You have completed all 6 questions! Click NEXT to proceed to the next level.", self.font, line_width)

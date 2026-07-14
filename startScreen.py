@@ -1,5 +1,7 @@
-import pygame
 import os
+import pygame
+from save import complete_lesson, load_save
+from levels.levelRunner import levelRunner
 from utils.config import width, height
 
 class mainScreen:
@@ -24,11 +26,18 @@ class mainScreen:
 
     #filler functions for now
     def open_pitch_levels(self):
-        print("Opening pitch levels")
+        save = load_save()
+        if save['completed_lessons'].get('Rhythm Section Complete!', False):
+            print("Opening pitch levels")
+            from levels.pitchLevels import levels
+            runner = levelRunner(self.screen, levels, self.icons)
+            return runner.get_current_screen()
+        else:
+            print("Cannot open pitch levels")
 
     def open_rhythm_levels(self):
         print("Opening rhythm levels")
-        from rhythmLevels import levels, levelRunner
+        from levels.rhythmLevels import levels
         runner = levelRunner(self.screen, levels, self.icons)
         return runner.get_current_screen()
     
