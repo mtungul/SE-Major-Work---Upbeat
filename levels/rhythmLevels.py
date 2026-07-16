@@ -37,7 +37,12 @@ levels = [
     'order' : 3,
     'lessonType' : 'rhythmTapPractice',
     'title' : 'Note Values Practice',
-    'text' : 'Now you will get to practice different rhythms! After clicking Begin, you will hear a four beat count in. Click the space bar to match the rhythm of the notes on the screen.',
+    'text' : (
+        'Now you will get to practice different rhythms! After clicking Begin, you will hear a four beat count in. '
+        '                                                                                            '
+        '                                                                                            '
+        '                                                                                            '
+        'Click the space bar to match the rhythm of the notes on the screen.'),
     'icon' : 'quaver',
     'notes_easy' : ['crotchet', 'crotchet', 'crotchet', 'crotchet', 'minim', 'minim'],
     'notes_med' : ['crotchet', 'crotchet', 'quavers', 'quavers', 'semibreve'],
@@ -77,8 +82,15 @@ levels = [
     'title' : 'Rest Notes Practice',
     'text' : (
         'Now you will get to practice playing both sound and silence. After clicking Begin, you will hear a four beat count in. '
-        'Click the space bar to match the rhythm of the notes on the screen. TIP: Make sure not to press the space bar on a rest note, '
-        'instead always keep counting to ensure you get the next note on time!'),
+        'Click the space bar to match the rhythm of the notes on the screen. '
+        '                                                                                                                               '
+        '                                                                                                                               '
+        '                                                                                                                               '
+        '                                                                                                                               '
+        '                                                                                                                               '
+        '                                                                                                                               '
+        '                                                                                                                               '
+        'TIP: Make sure not to press the space bar on a rest note, instead always keep counting to ensure you get the next note on time!'),
     'icon' : 'quaver',
     'notes_easy' : ['crotchet', 'crotchet', 'crotchet', 'crotchet_rest', 'minim_rest', 'minim'],
     'notes_med' : ['crotchet', 'crotchet', 'crotchet_rest', 'quavers', 'minim_rest'],
@@ -232,7 +244,9 @@ levels = [
     'order' : 11,
     'lessonType' : 'end',
     'title' : 'Rhythm Section Complete!',
-    'text' : 'Good job!',
+    'text' : (
+        'Good job! You have fully completed the rhythm section of Upbeat! Now you are able to proceed to the pitch section of the game. '
+        'NOTE: Feel free to revisit any of the previous levels whenever you want.'),
     'icon' : 'star',
     }
 ]

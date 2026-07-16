@@ -69,6 +69,11 @@ class practiceScreen(baseScreen):
         self.bad_hold_count = 0
 
     def handle_event(self, event):
+        if self.save['completed_lessons'].get(self.data['title'], False):
+            new_screen = super().handle_event(event)
+            if new_screen:
+                return new_screen
+        
         if self.state == 'start':
             new_screen = self.begin_button.handle_event(event)
             if new_screen:
@@ -76,9 +81,6 @@ class practiceScreen(baseScreen):
             new_screen = self.back_button.handle_event(event)
             if new_screen:
                 return new_screen
-            if self.save['completed_lessons'].get(self.data['title'], False):
-                return self.next_button.handle_event(event)
-            return None
 
         elif self.state == 'practice':
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:

@@ -6,7 +6,7 @@ class levelRunner:
             return level['order']
         self.steps = sorted(level_data, key=get_order)
         self.screen = screen
-        self.index = 0
+        self.index = 6
         self.completed = [False] * len(self.steps) #sets all levels to current incomplete (array of 10 Falses)
         self.max_unlocked = 0
         self.icons = icons
@@ -24,6 +24,10 @@ class levelRunner:
         
         elif step["lessonType"] == "rhythmTapPractice":
             from screens.rhythmTapPractice import practiceScreen
+            return practiceScreen(self.screen, step, self, self.icons)
+        
+        elif step["lessonType"] == "pitchPianoPractice":
+            from screens.pitchPianoPractice import practiceScreen
             return practiceScreen(self.screen, step, self, self.icons)
     
     def next_level(self):

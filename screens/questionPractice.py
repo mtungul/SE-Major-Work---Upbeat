@@ -13,6 +13,7 @@ class practiceScreen(baseScreen):
         self.completed = False
         self.state = 'start'
         self.total_questions = 0
+        self.save = load_save()
         
         #buttons
         self.beginButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'begin_btn.png')).convert_alpha()
@@ -34,6 +35,11 @@ class practiceScreen(baseScreen):
         self.incorrect_sound = pygame.mixer.Sound('soundExcerpts/incorrectSFX.mp3')
 
     def handle_event(self, event):
+        if self.save['completed_lessons'].get(self.data['title'], False):
+            new_screen = super().handle_event(event)
+            if new_screen:
+                return new_screen
+        
         if self.state == 'start':
             new_screen = self.begin_button.handle_event(event)
             if new_screen:
@@ -41,20 +47,15 @@ class practiceScreen(baseScreen):
             new_screen = self.back_button.handle_event(event)
             if new_screen:
                 return new_screen
-            save = load_save()
-            if save['completed_lessons'].get(self.data['title'], False):
-                return self.next_button.handle_event(event)
             return None
         
         elif self.state == "practice":
             for button in self.answer_buttons:
                 if button.clicked(event): #method in answerButton class
                     if button.correct:
-                        print("Correct!")
                         self.current_score += 1
                         self.answer_channel.play(self.correct_sound)
                     else:
-                        print("Wrong!")
                         self.answer_channel.play(self.incorrect_sound)
                         question_index = self.questions_to_ask[self.current_question]
                         self.wrong_answers.append(question_index)
@@ -106,7 +107,7 @@ class practiceScreen(baseScreen):
         #load image
         self.question_image = None
         if question["image"]:
-            image_path = os.path.join(os.getcwd(), "img", question["image"])
+            image_path = os.path.join(os.getcwd(), "img", f'questionPracticeImg/{question["image"]}')
             image = pygame.image.load(image_path).convert_alpha()
             self.question_image = pygame.transform.smoothscale(image, (200, 200))   
          

@@ -22,7 +22,7 @@ class baseScreen:
         self.backHomeButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'back_to_home.png')).convert_alpha()
         self.back_home_button = Button(width*(0.72), height*(0.89), self.backHomeButton, (width*(0.21), height*(0.085)), lambda: mainScreen(self.screen, self.icons))
         self.homeBtn = pygame.image.load(os.path.join(os.getcwd(),'img', 'home.png')).convert_alpha()
-        self.home_button = Button(width*(0.94), height*(0.01), self.homeBtn, (width*(0.06), height*(0.09)), lambda: mainScreen(self.screen, self.icons))
+        self.home_button = Button(width*(0.94), height*(0.01), self.homeBtn, (width*(0.05), height*(0.09)), lambda: mainScreen(self.screen, self.icons))
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -83,7 +83,6 @@ class baseScreen:
     def go_back(self):
         return self.runner.back_level()
 
-    
     def draw_layout(self):
         self.draw_icon_row()
                                     #numbers = colour (3), position (2), size(2)   

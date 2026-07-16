@@ -52,9 +52,9 @@ pitchlevels = [
     'text' : (
         "The pitch of a note is read by its position on a 5-line stave, and a clef. "
         "A clef is a musical symbol at the beginning of the stave that tells us which notes are being represented by stave's lines and spaces, "
-        "i.e. where the notes are. Below is the C major scale and a treble clef. "),
+        "i.e. where the notes are."),
     'icon' : 'lesson',
-    'img' : None, #c maj scale on stave
+    'img' : 'cmaj_chart.png',
     },
 
     { # level 4
@@ -81,7 +81,7 @@ pitchlevels = [
     'icon' : 'quaver',
     'questions' : [
         {
-           'image' : None, #treble clef image
+           'image' : 'treble_clef.png',
             'question' : "What is this?",
             'note' : None,
             'answers' : [
@@ -92,7 +92,7 @@ pitchlevels = [
             ],
         },
         {
-            'image' : None, #middle C
+            'image' : 'middleC.png',
             'question' : "What note is this?",
             'note' : None,
             'answers' : [
@@ -103,7 +103,7 @@ pitchlevels = [
             ],
         },
         {
-            'image' : None, #B
+            'image' : 'b.png',
             'question' : "What note is this?",
             'note' : None,
             'answers' : [
@@ -114,18 +114,18 @@ pitchlevels = [
             ], 
         },
         {
-            'image' : None, #E
+            'image' : 'e.png',
             'question' : "What note is this?",
             'note' : None,
             'answers' : [
-                {'text' : "3", 'correct' : True},
-                {'text' : "4", 'correct' : False},
-                {'text' : "7", 'correct' : False},
-                {'text' : "2", 'correct' : False},
+                {'text' : "E", 'correct' : True},
+                {'text' : "F", 'correct' : False},
+                {'text' : "C", 'correct' : False},
+                {'text' : "B", 'correct' : False},
             ], 
         },
         {
-            'image' : None, #C (in the stave)
+            'image' : 'c.png',
             'question' : "What note is this?",
             'note' : None,
             'answers' : [
@@ -136,7 +136,7 @@ pitchlevels = [
             ], 
         },
         {
-            'image' : None, #F
+            'image' : 'f.png',
             'question' : "What note is this?",
             'note' : None,
             'answers' : [
@@ -158,22 +158,52 @@ pitchlevels = [
         "Now you will get to practice playing a song! After clicking Begin, there will be sheet music for you to follow and an "
         "interactive piano you can play using your computer keyboard. See the image below to know where each note lies."),
     'icon' : 'quaver',
+    'sheetMusic' : 'MaryHadALittleLamb_sheetmusic.png',
+    'sheetMusic_assist' : 'MaryHadALittleLamb_sheetmusic_assist.png',
+    'expectedKeys' : [
+        'E', 'D', 'C', 'D', 
+        'E', 'E', 'E', 
+        'D', 'D', 'D', 
+        'E', 'E', 'E', 
+        'E', 'D', 'C', 'D', 
+        'E', 'E', 'E', 'E', 
+        'D', 'D', 'E','D', 
+        'C'],
+    'barLength' : [4, 3, 3, 3, 4, 4, 4, 1],
     },
 
     { # level 7
     'section' : 'pitch',
     'order' : 7,
-    'lessonType' : 'lepitchPianoPracticesson',
+    'lessonType' : 'pitchPianoPractice',
     'title' : 'Song #2 : Twinkle Twinkle Little Star',
-    'text' : '',
+    'text' : (
+        "After clicking Begin, there will be sheet music for you to follow and an "
+        "interactive piano you can play using your computer keyboard. See the image below to know where each note lies."),
     'icon' : 'quaver',
+    'sheetMusic' : 'TwinkleTwinkle_sheetmusic.png',
+    'sheetMusic_assist' : 'TwinkleTwinkle_sheetmusic_assist.png',
+    'expectedKeys' : [
+        'C', 'C', 'G', 'G', 
+        'A', 'A', 'G', 
+        'F', 'F', 'E', 'E',
+        'D', 'D', 'C',
+        'G', 'G', 'F', 'F',
+        'E', 'E', 'D', 
+        'G', 'G', 'F', 'F',
+        'E', 'E', 'D', 
+        'C', 'C', 'G', 'G', 
+        'A', 'A', 'G', 
+        'F', 'F', 'E', 'E',
+        'D', 'D', 'C',],
+    'barLength' : [4, 3, 4, 3, 4, 3, 4, 3, 4, 3, 4, 3],
     },
 
     { # level 8
     'section' : 'pitch',
     'order' : 8,
     'lessonType' : 'pitchPianoPractice',
-    'title' : 'Song #2 : Happy Birthday!',
+    'title' : 'Song #3 : Happy Birthday!',
     'text' : '',
     'icon' : 'quaver',
     

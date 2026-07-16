@@ -1,6 +1,5 @@
 import time
 import pygame
-from utils.config import width, height
 
 class metronome: 
     def __init__(self, pos: tuple, size: tuple, initial_bpm: float, min: int, max: int):
