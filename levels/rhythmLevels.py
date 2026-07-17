@@ -7,7 +7,7 @@ levels = [
     'text' : (
         "In music, 'rhythm' accounts for the timing and feel of a piece. It consists of the placement and duration of sounds or silences. "
         "In this section of UPBEAT you will learn about the different note values, time signatures, and tempo markings."),
-    'img' : None,
+    'img' : 'rhythm.png',
     'icon' : 'book',
     },
 
@@ -245,7 +245,7 @@ levels = [
     'lessonType' : 'end',
     'title' : 'Rhythm Section Complete!',
     'text' : (
-        'Good job! You have fully completed the rhythm section of Upbeat! Now you are able to proceed to the pitch section of the game. '
+        'Great work! You have fully completed the rhythm section of Upbeat! You are now able to proceed to the pitch section of the game. '
         'NOTE: Feel free to revisit any of the previous levels whenever you want.'),
     'icon' : 'star',
     }

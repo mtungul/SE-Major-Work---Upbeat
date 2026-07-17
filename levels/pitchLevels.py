@@ -5,9 +5,9 @@ pitchlevels = [
     'lessonType' : 'reading',
     'title' : 'What is Pitch?',
     'text' : (
-        "In music, 'pitch' is how high or low a note is. Alongside rhythm, it is what builds the melodies and harmonies of a song! "
+        "In music, 'pitch' is how high or low a note is. With rhythm, it is what builds the melodies and harmonies of a song! "
         "In this section of UPBEAT you will learn about the notes on the piano, the C major scale and how to play a few easy melodies!"),
-    'img' : None,
+    'img' : 'pitch.png',
     'icon' : 'book',
     },
 
@@ -203,10 +203,32 @@ pitchlevels = [
     'section' : 'pitch',
     'order' : 8,
     'lessonType' : 'pitchPianoPractice',
-    'title' : 'Song #3 : Happy Birthday!',
-    'text' : '',
+    'title' : 'Song #3 : Jingle Bells',
+    'text' : (
+        "This is the last Practice Level of Upbeat! In the following sheet music, you will see note heads coloured in blue towards the end. "
+        "This will be what's called a harmony. A harmony is when two or more notes are played at the same time and create a pleasing sound. "
+        "NOTE: Playing the harmony is optional (although is recommended). If you do, make sure to keep playing the melody as well."),
     'icon' : 'quaver',
-    
+    'sheetMusic' : 'JingleBells_sheetmusic.png',
+    'sheetMusic_assist' : 'JingleBells_sheetmusic_assist.png',
+    'expectedKeys' : [
+        'E', 'E', 'E',
+        'E', 'E', 'E',
+        'E', 'G', 'C', 'D',
+        'E',
+        'F', 'F', 'F', 'F',
+        'F', 'E', 'E', 'E', 'E',
+        'E', 'D', 'D', 'E',
+        'D', 'G',
+        'E', 'E', 'E',
+        'E', 'E', 'E',
+        'E', 'G', 'C', 'D',
+        'E',
+        'F', 'F', 'F', 'F',
+        'F', 'E', 'E', 'E', 'E',
+        'G', 'G', 'F', 'D',
+        'C',],
+    'barLength' : [3, 3, 4, 1, 4, 5, 4, 2, 3, 3, 4, 1, 4, 5, 4, 1],
     },
 
     { # level 9

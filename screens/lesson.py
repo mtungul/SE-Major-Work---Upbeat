@@ -11,7 +11,7 @@ class lessonScreen(baseScreen):
     def __init__(self, screen, step_data, runner, icons):
         super().__init__(screen, step_data, runner, icons)
 
-        self.playButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'play_button.png')).convert_alpha()
+        self.playButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'buttons', 'play_button.png')).convert_alpha()
 
         #load level images
         self.lesson_image = None
@@ -105,4 +105,8 @@ class lessonScreen(baseScreen):
 
         if self.metronome:
             self.metronome.draw(self.screen)
-        
+
+        if (self.data['order'] == 11 and self.data['section'] == 'rhythm') or (self.data['order'] == 9 and self.data['section'] == 'pitch'):
+            pass 
+        #show most recent score of each practice level
+        #show highest score of each level

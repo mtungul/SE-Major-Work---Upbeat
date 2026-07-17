@@ -21,11 +21,11 @@ class practiceScreen(baseScreen):
         self.accuracy_text = ""
         self.accuracy_colour = (0, 0, 0)
 
-        self.beginButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'begin_btn.png')).convert_alpha()
+        self.beginButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'buttons', 'begin_btn.png')).convert_alpha()
         self.begin_button = Button(width*(31/72), height/2, self.beginButton, (width*(5/36), height*(1/10)), self.generate_notes)
-        self.tryAgainButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'try_again_btn.png')).convert_alpha()
+        self.tryAgainButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'buttons', 'try_again_btn.png')).convert_alpha()
         self.try_again_button = Button(width*(20/72), height*(0.75), self.tryAgainButton, (width*(5/36), height*(1/10)), self.generate_notes)
-        self.nextLevelButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'next_button.png')).convert_alpha()
+        self.nextLevelButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'buttons', 'next_button.png')).convert_alpha()
         self.next_level_button = Button(width*(43/72), height*(0.75), self.nextLevelButton, (width*(5/36), height*(1/10)), self.next_level)
 
         #load note and rest images
@@ -75,6 +75,11 @@ class practiceScreen(baseScreen):
                 return new_screen
         
         if self.state == 'start':
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = event.pos
+                for i, hitbox in enumerate(self.icon_hitbox):
+                    if hitbox.collidepoint(mouse_pos):
+                        return self.runner.go_to_level(i)
             new_screen = self.begin_button.handle_event(event)
             if new_screen:
                 return new_screen

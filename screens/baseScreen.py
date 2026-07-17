@@ -14,14 +14,14 @@ class baseScreen:
         self.icon_hitbox = []
 
         #load and size buttons
-        self.nextButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'next_button.png')).convert_alpha()
-        self.backButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'back_button.png')).convert_alpha()
+        self.nextButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'buttons', 'next_button.png')).convert_alpha()
+        self.backButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'buttons', 'back_button.png')).convert_alpha()
         self.next_button = Button(width*(0.79), height*(0.88), self.nextButton, (width*(0.14), height*(0.1)), self.go_next)
         self.back_button = Button(width*(0.06), height*(0.88), self.backButton, (width*(0.14), height*(0.1)), self.go_back)
         
-        self.backHomeButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'back_to_home.png')).convert_alpha()
+        self.backHomeButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'buttons', 'back_to_home.png')).convert_alpha()
         self.back_home_button = Button(width*(0.72), height*(0.89), self.backHomeButton, (width*(0.21), height*(0.085)), lambda: mainScreen(self.screen, self.icons))
-        self.homeBtn = pygame.image.load(os.path.join(os.getcwd(),'img', 'home.png')).convert_alpha()
+        self.homeBtn = pygame.image.load(os.path.join(os.getcwd(),'img', 'buttons', 'home.png')).convert_alpha()
         self.home_button = Button(width*(0.94), height*(0.01), self.homeBtn, (width*(0.05), height*(0.09)), lambda: mainScreen(self.screen, self.icons))
 
     def handle_event(self, event):
@@ -32,14 +32,14 @@ class baseScreen:
                 if hitbox.collidepoint(mouse_pos):
 
                     return self.runner.go_to_level(i)
-       
         new_screen = self.next_button.handle_event(event)
         if new_screen:
             return new_screen
-        
-        new_screen = self.back_button.handle_event(event)
-        if new_screen:
-            return new_screen
+
+        if self.runner.index != 0:
+            new_screen = self.back_button.handle_event(event)
+            if new_screen:
+                return new_screen
         
         new_screen = self.back_home_button.handle_event(event)
         if new_screen:
@@ -48,7 +48,7 @@ class baseScreen:
         new_screen = self.home_button.handle_event(event)
         if new_screen:
             return new_screen
-
+        
     def draw_icon_row(self): #draws the row of icons at the top of the screen
         start_x = width*(2/27)
         y = height/10
@@ -93,8 +93,8 @@ class baseScreen:
         title = title_font.render(self.data["title"], True, (0, 0, 0))
         self.screen.blit(title, (width/18, height*(7/30)))
 
-        #next and back buttons
-        if self.runner.index == 10: #'back to home' button after last level of rhythm section
+        #next and back buttons  +  'back to home' button after last level of section
+        if (self.data['order'] == 11 and self.data['section'] == 'rhythm') or (self.data['order'] == 9 and self.data['section'] == 'pitch'):
             self.back_home_button.draw(self.screen)  
         else:
             self.next_button.draw(self.screen)  

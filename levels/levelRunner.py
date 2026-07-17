@@ -6,7 +6,7 @@ class levelRunner:
             return level['order']
         self.steps = sorted(level_data, key=get_order)
         self.screen = screen
-        self.index = 6
+        self.index = 0
         self.completed = [False] * len(self.steps) #sets all levels to current incomplete (array of 10 Falses)
         self.max_unlocked = 0
         self.icons = icons

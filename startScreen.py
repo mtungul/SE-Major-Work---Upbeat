@@ -3,16 +3,18 @@ import pygame
 from save import load_save
 from levels.levelRunner import levelRunner
 from utils.config import width, height
+from utils.text import wrap_text
 
 class mainScreen:
     def __init__(self, screen, icons):
         self.screen = screen
         self.icons = icons
         current_dir = os.getcwd()
+        self.font = pygame.font.Font('fonts/Vera.ttf', 20)
 
         #load images
-        self.pitch_btn = pygame.image.load(os.path.join(current_dir, 'img', 'pitch_btn.png')).convert_alpha()
-        self.rhythm_btn = pygame.image.load(os.path.join(current_dir, 'img', 'rhythm_btn.png')).convert_alpha()
+        self.pitch_btn = pygame.image.load(os.path.join(current_dir, 'img', 'buttons', 'pitch_btn.png')).convert_alpha()
+        self.rhythm_btn = pygame.image.load(os.path.join(current_dir, 'img', 'buttons', 'rhythm_btn.png')).convert_alpha()
         self.select = pygame.image.load(os.path.join(current_dir, 'img', 'select.png')).convert_alpha()
         self.logo = pygame.image.load(os.path.join(current_dir, 'img', 'logo.png')).convert_alpha()
 
@@ -48,12 +50,50 @@ class mainScreen:
         if new_screen:
             return new_screen
 
-    def draw(self):
-        self.screen.blit(self.logo, (width*(7/24), height/12))
-        self.screen.blit(self.select, (width*(5/12), height*(2/5)))
+    def show_instructions(self):
+        #black box background
+        black_box = pygame.Surface((width * 0.6, height * 0.6))
+        black_box.fill((255, 0, 255))
+        black_box.set_colorkey((255, 0, 255)) 
+        pygame.draw.rect(black_box, (0, 0, 0), (0, 0, width * 0.6, height * 0.6), border_radius=15)
+        black_box.set_alpha(220) 
+        self.screen.blit(black_box, (width/2 - width * 0.6 / 2, height/2 - height * 0.6 / 2))
 
-        self.pitch_button.draw(self.screen)
-        self.rhythm_button.draw(self.screen)
+        #text
+        welcome_text = ("Welcome to Upbeat!                                               "
+        "Upbeat is a beginner friendly educational game that will help you learn about music theory! "
+        "Please ensure your sound is turned ON and that you have access to a mouse / trackpad and keyboard.")
+        "Note: Your progress will be saved once you fully complete each level and will be indicated by the icons at the top of your screen."
+        
+        line_width = width*(0.5)
+        lines = wrap_text(welcome_text, self.font, line_width)
+
+        y = height/3
+        for line in lines:
+            text = self.font.render(line, True, (255, 255, 255))
+            self.screen.blit(text, (width/18, y))
+            y += 40
+
+        #show meaning of icons
+
+    def show_progress(self):
+        pass
+        #in the top left corner should be a small icon that when clicked shows what levels have been completed
+
+    def reset_game(self):
+        pass
+        #reset everything in the json file and starts from the very beginning including show_instructions
+
+    def draw(self):
+            self.screen.blit(self.logo, (width*(7/24), height/12))
+            self.screen.blit(self.select, (width*(5/12), height*(2/5)))
+
+            self.pitch_button.draw(self.screen)
+            self.rhythm_button.draw(self.screen)
+
+            self.show_instructions()
+            '''instructions = self.show_instructions()
+            self.screen.blit(instructions)'''
 
 class Button:
     def __init__(self, x, y, image, size, action=None):

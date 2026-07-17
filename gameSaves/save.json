@@ -1,10 +1,5 @@
 {
-  "completed_lessons": {
-    "Note Values Practice": true,
-    "Rest Notes Practice": true,
-    "Time Signature Practice": true,
-    "Final Rhythm Practice": true,
-    "C Major Scale Practice": true,
-    "Song #1 : Mary Had a Little Lamb": true
-  }
+  "completed_lessons": {},
+  "most_recent_score": {},
+  "highest_score": {}
 }

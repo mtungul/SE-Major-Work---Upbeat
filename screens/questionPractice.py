@@ -1,7 +1,7 @@
 import os
 import pygame
 import random
-from save import complete_lesson, load_save
+from save import complete_lesson, load_save, save_recent_score, save_highest_score
 from utils.text import wrap_text
 from utils.config import width, height
 from startScreen import Button
@@ -16,7 +16,7 @@ class practiceScreen(baseScreen):
         self.save = load_save()
         
         #buttons
-        self.beginButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'begin_btn.png')).convert_alpha()
+        self.beginButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'buttons', 'begin_btn.png')).convert_alpha()
         self.begin_button = Button(width*(31/72), height/2, self.beginButton, (width*(5/36), height*(1/10)), self.start_quiz)
 
         self.answer_buttons = []
@@ -41,6 +41,11 @@ class practiceScreen(baseScreen):
                 return new_screen
         
         if self.state == 'start':
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = event.pos
+                for i, hitbox in enumerate(self.icon_hitbox):
+                    if hitbox.collidepoint(mouse_pos):
+                        return self.runner.go_to_level(i)
             new_screen = self.begin_button.handle_event(event)
             if new_screen:
                 return new_screen
@@ -166,9 +171,13 @@ class practiceScreen(baseScreen):
                 button.draw(self.screen)
 
         elif self.state == 'finished':
+            accuracy = round(6/self.total_questions*100)
+
             if self.current_score == 6:
                 self.completed = True
                 complete_lesson(self.data["title"])
+                save_recent_score(self.data["title"], accuracy)
+                save_highest_score(self.data["title"], accuracy)
 
             line_width = width*(97/108)
             lines = wrap_text("You have completed all 6 questions! Click NEXT to proceed to the next level.", self.font, line_width)
@@ -178,7 +187,6 @@ class practiceScreen(baseScreen):
                 text = self.font.render(line, True, (0, 0, 0))
                 self.screen.blit(text, (width/18, y))
                 y += 40
-            accuracy = round(6/self.total_questions*100)
             accuracy_text = self.font.render(f"Overall Score and Accuracy: 6/{self.total_questions} ({accuracy}%)", True, (0, 0, 0))
             self.screen.blit(accuracy_text, (width/18, y + 10))
 
