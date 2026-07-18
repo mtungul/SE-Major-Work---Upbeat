@@ -15,11 +15,10 @@ levels = [
     'section' : 'rhythm',
     'order' : 2,
     'lessonType' : 'lesson',
-    'title' : 'Subdivisions and Note Values',
+    'title' : 'Note Values',
     'text' : (
-        'Subdivisions are how a beat is divided into a certain number of equal notes. '
-        'Note values represent the duration of that note and are relative to the tempo (speed) of the music. '
-        'The graph below shows the most common note values used, and how many of each equate to one semibreve (has the largest duration).'),
+        'Note values represent how long a note lasts for and are relative to the tempo (speed) of the music. '
+        'Each note has their own name and notation, as shown below. Click the play buttons to hear samples of how these notes may sound – the notes they are playing are displayed next to them.'),
     'img' : 'note_value_chart.png',
     'icon' : 'lesson',
     'excerpts' : [
@@ -38,21 +37,20 @@ levels = [
     'lessonType' : 'rhythmTapPractice',
     'title' : 'Note Values Practice',
     'text' : (
-        'Now you will get to practice different rhythms! After clicking Begin, you will hear a four beat count in. '
+        'Now you will get to practice different rhythms! After clicking Begin, you will hear a four beat count in, then you must hit the space bar to match the notes on the screen! While you are playing, you will hear a quiet beat to help you play in time. '
         '                                                                                            '
-        '                                                                                            '
-        '                                                                                            '
-        'Click the space bar to match the rhythm of the notes on the screen.'),
+        '                                                                                            '),
     'icon' : 'quaver',
-    'notes_easy' : ['crotchet', 'crotchet', 'crotchet', 'crotchet', 'minim', 'minim'],
-    'notes_med' : ['crotchet', 'crotchet', 'quavers', 'quavers', 'semibreve'],
-    'notes_hard' : ['crotchet', 'crotchet', 'crotchet', 'quavers', 'quavers', 'quavers', 'minim'],
+    'notes_easy' : ['crotchet', 'crotchet', 'crotchet', 'crotchet', 'crotchet', 'minim'],
+    'notes_med' : ['crotchet', 'crotchet', 'crotchet', 'quavers', 'quavers'],
+    'notes_hard' : ['crotchet', 'crotchet', 'crotchet', 'crotchet', 'quavers', 'quavers', 'minim'],
     'num_notes_easy' : '6',
     'num_notes_med' : '5',
     'num_notes_hard' : '7',
     'bpm_easy' : 60,
     'bpm_med' : 60,
     'bpm_hard' : 60,
+    'chart' : 'note_value_chart.png',
     },
 
     { # level 4
@@ -92,15 +90,16 @@ levels = [
         '                                                                                                                               '
         'TIP: Make sure not to press the space bar on a rest note, instead always keep counting to ensure you get the next note on time!'),
     'icon' : 'quaver',
-    'notes_easy' : ['crotchet', 'crotchet', 'crotchet', 'crotchet_rest', 'minim_rest', 'minim'],
-    'notes_med' : ['crotchet', 'crotchet', 'crotchet_rest', 'quavers', 'minim_rest'],
-    'notes_hard' : ['crotchet', 'crotchet_rest', 'minim', 'quavers', 'quavers', 'semibreve_rest'],
+    'notes_easy' : ['crotchet', 'crotchet', 'crotchet', 'crotchet_rest', 'crotchet_rest', 'crotchet_rest'],
+    'notes_med' : ['crotchet', 'crotchet', 'crotchet_rest', 'minim', 'minim_rest'],
+    'notes_hard' : ['crotchet', 'crotchet_rest', 'minim', 'crotchet', 'quavers', 'semibreve_rest'],
     'num_notes_easy' : '6',
     'num_notes_med' : '5',
     'num_notes_hard' : '6',
     'bpm_easy' : 60,
     'bpm_med' : 60,
     'bpm_hard' : 60,
+    'chart' : 'rest_value_chart.png',
     },
 
     { # level 6

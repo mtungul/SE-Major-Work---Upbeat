@@ -1,5 +1,15 @@
 {
-  "completed_lessons": {},
-  "most_recent_score": {},
-  "highest_score": {}
+  "first_time": false,
+  "completed_lessons": {
+    "Note Values Practice": true,
+    "Rest Notes Practice": true,
+    "Time Signature Practice": true,
+    "Final Rhythm Practice": true
+  },
+  "most_recent_score": {
+    "Time Signature Practice": 86
+  },
+  "highest_score": {
+    "Time Signature Practice": 86
+  }
 }

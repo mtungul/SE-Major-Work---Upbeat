@@ -24,6 +24,8 @@ class baseScreen:
         self.homeBtn = pygame.image.load(os.path.join(os.getcwd(),'img', 'buttons', 'home.png')).convert_alpha()
         self.home_button = Button(width*(0.94), height*(0.01), self.homeBtn, (width*(0.05), height*(0.09)), lambda: mainScreen(self.screen, self.icons))
 
+        self.finish_section_sfx = pygame.mixer.Sound('soundExcerpts/sfx/section_complete_sfx.mp3')
+
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             mouse_pos = event.pos #stores where player clicked
@@ -93,8 +95,15 @@ class baseScreen:
         title = title_font.render(self.data["title"], True, (0, 0, 0))
         self.screen.blit(title, (width/18, height*(7/30)))
 
-        #next and back buttons  +  'back to home' button after last level of section
+        #next and back buttons  +  'back to home' button after last level of section + show recent and highest score
         if (self.data['order'] == 11 and self.data['section'] == 'rhythm') or (self.data['order'] == 9 and self.data['section'] == 'pitch'):
+            if self.finish_section_sfx:
+                self.finish_section_sfx.play()
+            self.finish_section_sfx = None
+
+            #show most recent scores
+            
+
             self.back_home_button.draw(self.screen)  
         else:
             self.next_button.draw(self.screen)  

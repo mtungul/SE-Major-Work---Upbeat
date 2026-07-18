@@ -5,6 +5,7 @@ import copy
 SAVE_FILE = 'gameSaves/save.json'
 
 DEFAULT_SAVE = {
+    'first_time': True,
     'completed_lessons': {},
     'most_recent_score': {},
     'highest_score': {},
@@ -45,5 +46,6 @@ def save_highest_score(lesson_title, score):
     if score > previous_highest:
         data['highest_score'][lesson_title] = score
     save_data(data)
-    
 
+#either make a new set of functions for rhythm tap practice that uses title, difficulty, score
+#or add difficulty to the current one and questions only has 1 difficulty

@@ -60,6 +60,7 @@ class practiceScreen(baseScreen):
         #note sounds
         self.note_channel = pygame.mixer.Channel(0) #the space bar notes will be in channel 0 so it won't mix with other existing sounds
         self.note_sound = pygame.mixer.Sound('soundExcerpts/spacebar_note.mp3')
+        self.count_in_channel = pygame.mixer.Channel(2)
 
         #player's initial scores
         self.perfect_count = 0
@@ -67,6 +68,15 @@ class practiceScreen(baseScreen):
         self.miss_count = 0
         self.good_hold_count = 0
         self.bad_hold_count = 0
+
+        #chart
+        self.showing_chart = False
+        self.show_chart = pygame.Rect(0, 0, width*(0.2), height*(0.05)) #rect for text
+        self.show_chart_image = None
+        if self.data.get("chart"):
+            image_path = os.path.join(os.getcwd(), 'img', self.data["chart"])
+            self.show_chart_image_original = pygame.image.load(image_path).convert_alpha()
+            self.show_chart_image = pygame.transform.smoothscale(self.show_chart_image_original, (544, 260))
 
     def handle_event(self, event):
         if self.save['completed_lessons'].get(self.data['title'], False):
@@ -104,10 +114,6 @@ class practiceScreen(baseScreen):
                 return new_screen
             
             new_screen = self.next_level_button.handle_event(event)
-            if new_screen:
-                return new_screen
-        
-            new_screen = self.back_button.handle_event(event)
             if new_screen:
                 return new_screen
             
@@ -206,15 +212,14 @@ class practiceScreen(baseScreen):
         self.ms_per_beat = 60000/self.bpm
         self.timer_start = pygame.time.get_ticks() + (4 * self.ms_per_beat)
         
-        count_in = pygame.mixer.Sound(f"soundExcerpts/{self.bpm}bpm.mp3")
-        count_in.play()
+        self.count_in = pygame.mixer.Sound(f"soundExcerpts/{self.bpm}bpm.mp3")
+        self.count_in_channel.play(self.count_in, loops=0)
 
         self.current_note = 0
 
         self.level_text = level
         displayed_notes = random.sample(notes, k=num_notes) #array of random notes
         self.active_notes = [] #empty array
-
 
         current_x = 0
         for note in displayed_notes:
@@ -246,6 +251,19 @@ class practiceScreen(baseScreen):
 
                 current_time += self.note_definitions[note]["duration"] * self.ms_per_beat
     
+    def show_chart_text(self):
+        self.show_chart.topleft = (width/2 - width*(0.2)/2, height*(0.91)) #rect position
+        pygame.draw.rect(self.screen, (90, 90, 90), self.show_chart, border_radius=8)
+        chart_text = self.font.render("Hover here to show chart", True, (255, 255, 255))
+        chart_rect = chart_text.get_rect(center=self.show_chart.center)
+        self.screen.blit(chart_text, chart_rect)
+
+    def show_chart_img(self):
+        image_rect = self.show_chart_image.get_rect(topleft=(width/2 - 544/2, height/2 - 260/2))
+        self.screen.blit(self.show_chart_image, image_rect)
+        pygame.draw.rect(self.screen, (0, 0, 0), image_rect, 1)
+        #self.screen.blit(self.show_chart_image, (width/2 - 544/2, height/2 - 260/2)) #display chart in centre
+
     def update_screen(self):
         if self.state != "practice":
             return
@@ -349,9 +367,12 @@ class practiceScreen(baseScreen):
                     pygame.draw.circle(self.screen, (255, 0, 0), (int(pos[0] + 50), int(pos[1] - 20)), 8)
 
         elif self.state == 'finished':
+            self.count_in_channel.stop()
+
             if self.level_text:
                 self.screen.blit(self.level_text, (width*(0.8), height*(0.25)))
             self.try_again_button.draw(self.screen)
+
             if not self.completed:
                 self.next_level_button.draw(self.screen)
             title_font = pygame.font.Font('fonts/new_amsterdam/NewAmsterdam.ttf', 40)
@@ -399,3 +420,14 @@ class practiceScreen(baseScreen):
 
             accuracy_text = text_font.render(f"Overall Accuracy: {self.accuracy}%", True, (0, 0, 0))
             self.screen.blit(accuracy_text, (width*(0.41), height*(0.7)))
+
+            #save scores
+            
+
+            #chart
+            if self.data.get("chart"):
+                self.show_chart_text()
+            mouse_pos = pygame.mouse.get_pos()
+            self.showing_chart = self.show_chart.collidepoint(mouse_pos)
+            if self.showing_chart:
+                self.show_chart_img()
