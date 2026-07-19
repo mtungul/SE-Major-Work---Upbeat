@@ -1,5 +1,6 @@
 import os
 import pygame
+from save import load_save
 from startScreen import Button, mainScreen
 from utils.icons import tint_icon 
 from utils.config import width, height
@@ -12,6 +13,7 @@ class baseScreen:
         self.runner = runner
         self.icons = icons
         self.icon_hitbox = []
+        self.save = load_save()
 
         #load and size buttons
         self.nextButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'buttons', 'next_button.png')).convert_alpha()
@@ -102,7 +104,69 @@ class baseScreen:
             self.finish_section_sfx = None
 
             #show most recent scores
+            score_title_font = pygame.font.Font('fonts/new_amsterdam/NewAmsterdam.ttf', 40)
+            score_font = pygame.font.Font('fonts/new_amsterdam/NewAmsterdam.ttf', 30)
+
+            x_left = width * 0.07
+            x_centre = width * 0.28
+            x_right = width * 0.65
+            y = height * 0.46
+
+            #titles (row 1)
+            practice_text = score_title_font.render("Practice Level:", True, (0, 0, 0))
+            recent_text = score_title_font.render("Your Recent Scores:", True, (0, 0, 0))
+            highest_text = score_title_font.render("Your Highest Scores:", True, (0, 0, 0))
+
+            self.screen.blit(practice_text, (x_left, y))
+            self.screen.blit(recent_text, (x_centre, y))
+            self.screen.blit(highest_text, (x_right, y))
+
+            #left column
+            y_start = y + 60
+            lesson_names = ['Note Values', 'Rest Note Values', 'Time Signature', 'Final']
+
+            for lesson in lesson_names:
+                lesson_name_text = score_font.render(f'{lesson}', True, (0, 0, 0))
+                self.screen.blit(lesson_name_text, (x_left, y_start))
+                y_start += 50
             
+            #recent scores
+            y_start = y + 60
+            for lesson_name, difficulties in self.save['most_recent_score'].items(): #cycle through levels - format: ('title', {'difficulty': int, x3})
+                for difficulty, score in difficulties.items(): #cycle through difficulties
+                    if difficulty == 'Easy': 
+                        colour = (0, 150, 0)
+                    elif difficulty == 'Medium':
+                        colour = (200, 140, 0)
+                    elif difficulty == 'Hard':
+                        colour = (150, 0 ,0)
+                    else:
+                        colour = (20, 20, 20)
+                    score_text = score_font.render(f'{difficulty}: {score}', True, colour)
+                    self.screen.blit(score_text, (x_centre, y_start))
+                    x_centre += 150
+
+                y_start += 50
+                x_centre = width * 0.28
+            
+            #highest scores
+            y_start = y + 60
+            for lesson_name, difficulties in self.save['highest_score'].items(): #cycle through levels - format: ('title', {'difficulty': int, x3})
+                for difficulty, score in difficulties.items(): #cycle through difficulties
+                    if difficulty == 'Easy': 
+                        colour = (0, 150, 0)
+                    elif difficulty == 'Medium':
+                        colour = (200, 140, 0)
+                    elif difficulty == 'Hard':
+                        colour = (150, 0 ,0)
+                    else:
+                        colour = (20, 20, 20)
+                    score_text = score_font.render(f'{difficulty}: {score}', True, colour)
+                    self.screen.blit(score_text, (x_right, y_start))
+                    x_right += 150
+
+                y_start += 50
+                x_right = width * 0.65
 
             self.back_home_button.draw(self.screen)  
         else:

@@ -28,24 +28,27 @@ def load_save():
 
 def save_data(data):
     with open(SAVE_FILE, 'w') as file:
-        json.dump(data, file, indent=2)
+        json.dump(data, file, indent=3)
 
 def complete_lesson(lesson_title):
     data = load_save()
     data['completed_lessons'][lesson_title] = True
     save_data(data)
 
-def save_recent_score(lesson_title, score):
+def save_recent_score(lesson_title, difficulty, score):
     data = load_save()
-    data['most_recent_score'][lesson_title] = score
+    if lesson_title not in data['most_recent_score']:
+        data['most_recent_score'][lesson_title] = {}
+    
+    data['most_recent_score'][lesson_title][difficulty] = score
     save_data(data)
 
-def save_highest_score(lesson_title, score):
+def save_highest_score(lesson_title, difficulty, score):
     data = load_save()
-    previous_highest = data['highest_score'].get(lesson_title, 0)
+    if lesson_title not in data['highest_score']:
+        data['highest_score'][lesson_title] = {}
+        
+    previous_highest = data['highest_score'][lesson_title].get(difficulty, 0)
     if score > previous_highest:
-        data['highest_score'][lesson_title] = score
+        data['highest_score'][lesson_title][difficulty] = score
     save_data(data)
-
-#either make a new set of functions for rhythm tap practice that uses title, difficulty, score
-#or add difficulty to the current one and questions only has 1 difficulty

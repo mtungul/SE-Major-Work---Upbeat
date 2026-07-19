@@ -1,7 +1,7 @@
 import os
 import pygame
 import random
-from save import complete_lesson, load_save
+from save import complete_lesson, load_save, save_recent_score , save_highest_score
 from startScreen import Button
 from utils.text import wrap_text
 from utils.config import width, height
@@ -18,8 +18,9 @@ class practiceScreen(baseScreen):
         self.save = load_save()
         self.bpm = 60
         self.accuracy = 0 #for percentage
-        self.accuracy_text = ""
+        self.accuracy_text = ''
         self.accuracy_colour = (0, 0, 0)
+        self.difficulty = 'Easy'
 
         self.beginButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'buttons', 'begin_btn.png')).convert_alpha()
         self.begin_button = Button(width*(31/72), height/2, self.beginButton, (width*(5/36), height*(1/10)), self.generate_notes)
@@ -137,7 +138,7 @@ class practiceScreen(baseScreen):
         elif difference <= 300:
             self.good_count += 1
             self.accuracy_text = "Good!"
-            self.accuracy_colour = (150, 150, 0)
+            self.accuracy_colour = (130, 150, 0)
         else:
             self.miss_count += 1
             self.accuracy_text = "Miss"
@@ -192,23 +193,22 @@ class practiceScreen(baseScreen):
         y = height*(0.41)
 
         if self.points <= 1:
+            self.difficulty = 'Easy'
             notes = self.data["notes_easy"] 
             num_notes = int(self.data["num_notes_easy"])
-            level = self.font.render("Difficulty: Easy", True, (0, 0, 0))
             self.bpm = self.data["bpm_easy"]
         elif self.points <= 3:
+            self.difficulty = 'Medium'
             notes = self.data["notes_med"]
             num_notes = int(self.data["num_notes_med"])
-            level = self.font.render("Difficulty: Medium", True, (0, 0, 0))
             self.bpm = self.data["bpm_med"]
         else:
+            self.difficulty = 'Hard'
             notes = self.data["notes_hard"]
             num_notes = int(self.data["num_notes_hard"])
-            level = self.font.render("Difficulty: Hard", True, (0, 0, 0))
             self.bpm = self.data["bpm_hard"]
 
         #4 beat count in at x bpm
-        current_time = 0
         self.ms_per_beat = 60000/self.bpm
         self.timer_start = pygame.time.get_ticks() + (4 * self.ms_per_beat)
         
@@ -217,11 +217,13 @@ class practiceScreen(baseScreen):
 
         self.current_note = 0
 
-        self.level_text = level
+        self.level_text = self.font.render(f"Difficulty: {self.difficulty}", True, (0, 0, 0))
         displayed_notes = random.sample(notes, k=num_notes) #array of random notes
         self.active_notes = [] #empty array
 
         current_x = 0
+        current_time = 0
+
         for note in displayed_notes:
             x = start_x + current_x
 
@@ -422,7 +424,8 @@ class practiceScreen(baseScreen):
             self.screen.blit(accuracy_text, (width*(0.41), height*(0.7)))
 
             #save scores
-            
+            save_recent_score(self.data['title'], self.difficulty, self.accuracy)
+            save_highest_score(self.data['title'], self.difficulty, self.accuracy)
 
             #chart
             if self.data.get("chart"):

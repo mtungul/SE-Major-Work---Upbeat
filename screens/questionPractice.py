@@ -176,8 +176,8 @@ class practiceScreen(baseScreen):
             if self.current_score == 6:
                 self.completed = True
                 complete_lesson(self.data["title"])
-                save_recent_score(self.data["title"], accuracy)
-                save_highest_score(self.data["title"], accuracy)
+                save_recent_score(self.data["title"], 'Normal', accuracy)
+                save_highest_score(self.data["title"], 'Normal', accuracy)
 
             line_width = width*(97/108)
             lines = wrap_text("You have completed all 6 questions! Click NEXT to proceed to the next level.", self.font, line_width)

@@ -78,7 +78,6 @@ class Piano:
             if i in self.active_blacks:
                 pygame.draw.rect(self.screen, 'green', [x, self.pos[1], self.black_key_width, 200], 2, 2)
 
-
             self.black_keys.append(rect)
 
         for i in self.active_whites:
