@@ -1,5 +1,6 @@
 import os
 import pygame
+from save import complete_lesson
 from metronome import metronome
 from startScreen import Button
 from utils.text import wrap_text
@@ -60,6 +61,10 @@ class lessonScreen(baseScreen):
             
         return super().handle_event(event)
     
+    def go_next(self):  #overide from basescreen so it counts this level as complete
+        complete_lesson(self.data['title'])
+        return super().go_next()
+
     def update(self):
         if self.metronome:
             self.metronome.update()
@@ -83,7 +88,8 @@ class lessonScreen(baseScreen):
                 self.screen.blit(self.lesson_image, (width/12, y + 5))
             else:
                 lesson = self.data.get("order")
-                if lesson == 7:
+                section = self.data.get("section")
+                if lesson == 7 and section == 'rhythm':
                     self.lesson_image = pygame.transform.smoothscale(self.lesson_image_original, (width*(0.8), height*(0.55)))
                     self.screen.blit(self.lesson_image, (width*(0.1), y-65))
                 else:
@@ -105,8 +111,3 @@ class lessonScreen(baseScreen):
 
         if self.metronome:
             self.metronome.draw(self.screen)
-
-        if (self.data['order'] == 11 and self.data['section'] == 'rhythm') or (self.data['order'] == 9 and self.data['section'] == 'pitch'):
-            pass 
-        #show most recent score of each practice level
-        #show highest score of each level

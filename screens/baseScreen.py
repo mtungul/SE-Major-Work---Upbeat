@@ -22,9 +22,9 @@ class baseScreen:
         self.back_button = Button(width*(0.06), height*(0.88), self.backButton, (width*(0.14), height*(0.1)), self.go_back)
         
         self.backHomeButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'buttons', 'back_to_home.png')).convert_alpha()
-        self.back_home_button = Button(width*(0.72), height*(0.89), self.backHomeButton, (width*(0.21), height*(0.085)), lambda: mainScreen(self.screen, self.icons))
+        self.back_home_button = Button(width*(0.72), height*(0.89), self.backHomeButton, (width*(0.21), height*(0.085)), self.go_home)
         self.homeBtn = pygame.image.load(os.path.join(os.getcwd(),'img', 'buttons', 'home.png')).convert_alpha()
-        self.home_button = Button(width*(0.94), height*(0.01), self.homeBtn, (width*(0.05), height*(0.09)), lambda: mainScreen(self.screen, self.icons))
+        self.home_button = Button(width*(0.94), height*(0.01), self.homeBtn, (width*(0.05), height*(0.09)), self.go_home)
 
         self.finish_section_sfx = pygame.mixer.Sound('soundExcerpts/sfx/section_complete_sfx.mp3')
 
@@ -58,6 +58,7 @@ class baseScreen:
         y = height/10
         spacing = 106
         self.icon_hitbox = []
+        save = load_save()
 
         for i in range(len(self.runner.steps)):
             x = start_x + i * spacing
@@ -72,7 +73,7 @@ class baseScreen:
 
             if i == self.runner.index: 
                 icon = tint_icon(icon, (255, 255, 255)) #current level
-            elif self.runner.completed[i]:
+            elif save["completed_lessons"].get(step["title"], False):
                 icon = tint_icon(icon, (215, 215, 215)) #completed levels
             else:
                 icon = tint_icon(icon, (120, 120, 120)) #haven't completed yet
@@ -86,6 +87,10 @@ class baseScreen:
     
     def go_back(self):
         return self.runner.back_level()
+    
+    def go_home(self):
+        pygame.mixer.stop()
+        return mainScreen(self.screen, self.icons)
 
     def draw_layout(self):
         self.draw_icon_row()
@@ -98,7 +103,20 @@ class baseScreen:
         self.screen.blit(title, (width/18, height*(7/30)))
 
         #next and back buttons  +  'back to home' button after last level of section + show recent and highest score
-        if (self.data['order'] == 11 and self.data['section'] == 'rhythm') or (self.data['order'] == 9 and self.data['section'] == 'pitch'):
+        if (self.data['order'] == 11 and self.data['section'] == 'rhythm') or (self.data['order'] == 10 and self.data['section'] == 'pitch'):
+            
+            if self.data['order'] == 11 and self.data['section'] == 'rhythm':
+                lesson_names = [ #display name and original name
+                    ("Note Values", "Note Values Practice"),
+                    ("Rest Note Values", "Rest Notes Practice"),
+                    ("Time Signature", "Time Signature Practice"),
+                    ("Final", "Final Rhythm Practice"),
+                ]
+            elif self.data['order'] == 10 and self.data['section'] == 'pitch':
+                lesson_names = [
+                    ("C Major Scale", "C Major Scale Practice"),
+                ]   
+
             if self.finish_section_sfx:
                 self.finish_section_sfx.play()
             self.finish_section_sfx = None
@@ -123,17 +141,17 @@ class baseScreen:
 
             #left column
             y_start = y + 60
-            lesson_names = ['Note Values', 'Rest Note Values', 'Time Signature', 'Final']
 
-            for lesson in lesson_names:
-                lesson_name_text = score_font.render(f'{lesson}', True, (0, 0, 0))
+            for display_name, original_name in lesson_names:
+                lesson_name_text = score_font.render(display_name, True, (0, 0, 0))
                 self.screen.blit(lesson_name_text, (x_left, y_start))
                 y_start += 50
             
             #recent scores
             y_start = y + 60
-            for lesson_name, difficulties in self.save['most_recent_score'].items(): #cycle through levels - format: ('title', {'difficulty': int, x3})
-                for difficulty, score in difficulties.items(): #cycle through difficulties
+            for display_name, original_name in lesson_names:
+                difficulties = self.save["most_recent_score"].get(original_name, {})
+                for difficulty, score in difficulties.items():
                     if difficulty == 'Easy': 
                         colour = (0, 150, 0)
                     elif difficulty == 'Medium':
@@ -145,14 +163,14 @@ class baseScreen:
                     score_text = score_font.render(f'{difficulty}: {score}', True, colour)
                     self.screen.blit(score_text, (x_centre, y_start))
                     x_centre += 150
-
                 y_start += 50
                 x_centre = width * 0.28
             
             #highest scores
             y_start = y + 60
-            for lesson_name, difficulties in self.save['highest_score'].items(): #cycle through levels - format: ('title', {'difficulty': int, x3})
-                for difficulty, score in difficulties.items(): #cycle through difficulties
+            for display_name, original_name in lesson_names:
+                difficulties = self.save["highest_score"].get(original_name, {})
+                for difficulty, score in difficulties.items():
                     if difficulty == 'Easy': 
                         colour = (0, 150, 0)
                     elif difficulty == 'Medium':
@@ -170,7 +188,8 @@ class baseScreen:
 
             self.back_home_button.draw(self.screen)  
         else:
-            self.next_button.draw(self.screen)  
+            if self.data['lessonType'] in ('lesson', 'reading') or self.save['completed_lessons'].get(self.data['title'], False):
+                self.next_button.draw(self.screen)  
 
         if self.runner.index != 0:
             self.back_button.draw(self.screen)

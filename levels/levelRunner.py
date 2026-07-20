@@ -1,4 +1,5 @@
 import pygame
+from save import load_save
 
 class levelRunner:
     def __init__(self, screen, level_data, icons):
@@ -6,10 +7,17 @@ class levelRunner:
             return level['order']
         self.steps = sorted(level_data, key=get_order)
         self.screen = screen
-        self.index = 8
-        self.completed = [False] * len(self.steps) #sets all levels to current incomplete (array of 10 Falses)
-        self.max_unlocked = 0
+        self.index = 0
         self.icons = icons
+
+        save = load_save()
+        self.completed = []
+        for step in self.steps: #array of true or falses depending on completion
+            self.completed.append(save['completed_lessons'].get(step['title'], False))
+
+        self.max_unlocked = 0
+        for i , completed in enumerate(self.completed):
+            if completed: self.max_unlocked = i + 1
 
     def get_current_screen(self):
         step = self.steps[self.index]
@@ -55,7 +63,9 @@ class levelRunner:
     
     def go_to_level(self, index):
         pygame.mixer.stop()
-        if index <= self.max_unlocked: #only allow unlocked levels
+        save = load_save()
+        step = self.steps[index]
+        if (index <= self.max_unlocked or save["completed_lessons"].get(step["title"], False)): #only allow unlocked levels
             self.index = index
             return self.get_current_screen()
 

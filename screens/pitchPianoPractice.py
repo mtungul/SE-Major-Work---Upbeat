@@ -68,6 +68,9 @@ class practiceScreen(baseScreen):
             new_screen = self.reset_btn.handle_event(event)
             if new_screen:
                 return new_screen
+            new_screen = self.back_button.handle_event(event)
+            if new_screen:
+                return new_screen
                         
         elif self.state == 'finished':
             self.piano.handle_event(event)
@@ -194,16 +197,16 @@ class practiceScreen(baseScreen):
         
             if self.state == 'finished':
                 finish_font = pygame.font.Font('fonts/Vera.ttf', 25)
-                if self.data['order'] == 6:
+                if self.data['order'] == 7:
                     text = finish_font.render("Great Job! You're a Star!", True, (0, 0, 0))
                     pos = (width*(0.4), height*(0.91))
-                if self.data['order'] == 7:
+                if self.data['order'] == 8:
                     text = finish_font.render("Wonderful Effort! You're amazing!", True, (0, 0, 0))
                     pos = (width*(0.35), height*(0.91))
-                if self.data['order'] == 8:
+                if self.data['order'] == 9:
                     text = finish_font.render("Fantastic! You're awesome!", True, (0, 0, 0))
                     pos = (width*(0.39), height*(0.91))
                 self.screen.blit(text, (pos))
+
                 complete_lesson(self.data["title"])
                 self.save = load_save()
-

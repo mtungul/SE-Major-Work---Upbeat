@@ -1,4 +1,4 @@
-levels = [
+rhythmlevels = [
     { # level 1
     'section' : 'rhythm',
     'order' : 1,
@@ -37,9 +37,9 @@ levels = [
     'lessonType' : 'rhythmTapPractice',
     'title' : 'Note Values Practice',
     'text' : (
-        'Now you will get to practice different rhythms! After clicking Begin, you will hear a four beat count in, then you must hit the space bar to match the notes on the screen! While you are playing, you will hear a quiet beat to help you play in time. '
-        '                                                                                            '
-        '                                                                                            '),
+        'Now you will get to practice different rhythms! After clicking Begin, you will hear a count in of four beats, '
+        'then you must hit the space bar to match the notes on the screen! '
+        'While you are playing, you will hear a quiet beat to help you play in time. '),
     'icon' : 'quaver',
     'notes_easy' : ['crotchet', 'crotchet', 'crotchet', 'crotchet', 'crotchet', 'minim'],
     'notes_med' : ['crotchet', 'crotchet', 'crotchet', 'quavers', 'quavers'],
@@ -60,7 +60,7 @@ levels = [
     'title' : 'Rest Notes',
     'text' : (
         "Music is the art of both sound AND silence. As important as it is knowing when to play, it is also important to know when NOT to play. "
-        "'Rests' are notes that tell us when to not play. Similarly to the previous lesson, there are different note values for each rest."),
+        "'Rests' are notes that tell us when to NOT play. Similarly to the previous lesson, there are different note values for each rest."),
     'img' : 'rest_value_chart.png',
     'icon' : 'lesson',
     'excerpts' : [
@@ -79,7 +79,7 @@ levels = [
     'lessonType' : 'rhythmTapPractice',
     'title' : 'Rest Notes Practice',
     'text' : (
-        'Now you will get to practice playing both sound and silence. After clicking Begin, you will hear a four beat count in. '
+        'Now you will get to practice playing both sound and silence! After clicking Begin, you will hear a count in of four beats. '
         'Click the space bar to match the rhythm of the notes on the screen. '
         '                                                                                                                               '
         '                                                                                                                               '
@@ -88,7 +88,7 @@ levels = [
         '                                                                                                                               '
         '                                                                                                                               '
         '                                                                                                                               '
-        'TIP: Make sure not to press the space bar on a rest note, instead always keep counting to ensure you get the next note on time!'),
+        'TIP: Make sure not to press the space bar on a rest note, instead always keep counting to make sure you get the next note on time!'),
     'icon' : 'quaver',
     'notes_easy' : ['crotchet', 'crotchet', 'crotchet', 'crotchet_rest', 'crotchet_rest', 'crotchet_rest'],
     'notes_med' : ['crotchet', 'crotchet', 'crotchet_rest', 'minim', 'minim_rest'],
@@ -108,7 +108,7 @@ levels = [
     'lessonType' : 'lesson',
     'title' : 'Time Signatures',
     'text' : (
-        'A time signature is the musical notation that dictates the pulse and rhythmic feel of a piece. '
+        'A time signature is the musical notation that tells us the pulse and rhythmic feel of a piece. '
         'It lets us know how to count before we start playing. Below is a diagram of the different parts of reading sheet music.'),
     'img' : 'stave_chart.png',
     'icon' : 'lesson',
@@ -224,8 +224,8 @@ levels = [
     'lessonType' : 'rhythmTapPractice',
     'title' : 'Final Rhythm Practice',
     'text' : (
-        'To wrap everything up, you will combine the four different lesson about notes, rests, time signature, and tempo! '
-        'After clicking Begin, you will hear a four beat count in. Click the space bar to match the rhythm of the notes on the screen. Good Luck!'),
+        'To wrap everything up, you will combine the four different lessons about notes, rests, time signature, and tempo!'
+        ' After clicking Begin, you will hear a four beat count in. Click the space bar to match the rhythm of the notes on the screen. Good Luck!'),
     'icon' : 'quaver',
     'notes_easy' : ['minim', 'minim', 'minim_rest', 'minim', 'minim_rest', 'minim'],
     'notes_med' : ['crotchet', 'crotchet', 'crotchet', 'crotchet', 'quavers', 'crotchet_rest', 'crotchet_rest', 'crotchet_rest'],

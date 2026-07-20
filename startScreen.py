@@ -1,7 +1,9 @@
 import os
 import pygame
-from save import load_save, save_data
+from save import load_save, save_data, reset_user_progress
 from levels.levelRunner import levelRunner
+from levels.rhythmLevels import rhythmlevels
+from levels.pitchLevels import pitchlevels
 from utils.config import width, height
 from utils.icons import tint_icon
 from utils.text import wrap_text
@@ -13,9 +15,13 @@ class mainScreen:
         current_dir = os.getcwd()
         self.font = pygame.font.Font('fonts/Vera.ttf', 20)
         self.font_big = pygame.font.Font('fonts/Vera.ttf', 30)
+        self.font_small = pygame.font.Font('fonts/Vera.ttf', 15)
 
-        save = load_save()
-        self.first_time = save["first_time"]
+        self.save = load_save()
+        self.first_time = self.save["first_time"]
+
+        self.open_progress = False
+        self.confirm_reset = False
             
         #load images
         self.pitch_btn = pygame.image.load(os.path.join(current_dir, 'img', 'buttons', 'pitch_btn.png')).convert_alpha()
@@ -24,6 +30,7 @@ class mainScreen:
         self.logo_original = pygame.image.load(os.path.join(current_dir, 'img', 'logo.png')).convert_alpha()
         self.icon_meaning_img_original = pygame.image.load(os.path.join(current_dir, 'img', 'icon_details.png')).convert_alpha()
         self.progress_book_btn = pygame.image.load(os.path.join(current_dir, 'img', 'buttons', 'progress_book_btn.png')).convert_alpha()
+        self.reset_btn = pygame.image.load(os.path.join(os.getcwd(),'img', 'buttons', 'reset_btn.png')).convert_alpha()
 
         #resize images
         self.select = pygame.transform.smoothscale(self.select_original, (width*(0.16), height*(0.08)))
@@ -34,25 +41,38 @@ class mainScreen:
         self.pitch_button = Button(width*(5/9), height/2, self.pitch_btn, (width*(0.3), height/3), self.open_pitch_levels)
         self.rhythm_button = Button(width*(5/36), height/2, self.rhythm_btn, (width*(0.3), height/3), self.open_rhythm_levels)
         self.progress_button = Button(width*(0.94), height*(0.02), self.progress_book_btn, (width*(0.04), height*(0.07)), self.show_progress)
+        self.reset_button = Button((width*(0.2)) + 30, height*(0.16) + 25, self.reset_btn, (width*(0.05), height*(0.03)), self.ask_reset)
+        self.yes_button = textButton("Yes, reset game", (width*(0.4), height*(0.55)), self.font_small, (255, 255, 255), (255, 0, 0), self.reset_game)
+        self.no_button = textButton("No, cancel", (width*(0.6), height*(0.55)), self.font_small, (255, 255, 255), (255, 0, 0), self.cancel_reset)
 
         self.exit_box = pygame.Rect(0, 0, 20, 20)
 
-    #filler functions for now
     def open_pitch_levels(self):
         save = load_save()
         if save['completed_lessons'].get('Final Rhythm Practice', False):
-            from levels.pitchLevels import pitchlevels
             runner = levelRunner(self.screen, pitchlevels, self.icons)
             return runner.get_current_screen()
         else:
             print("Must complete rhythm section")
 
     def open_rhythm_levels(self):
-        from levels.rhythmLevels import levels
-        runner = levelRunner(self.screen, levels, self.icons)
+        runner = levelRunner(self.screen, rhythmlevels, self.icons)
         return runner.get_current_screen()
     
     def handle_event(self, event):
+        if self.confirm_reset:
+            new_screen = self.yes_button.handle_event(event)
+            if new_screen:
+                return new_screen
+
+            self.no_button.handle_event(event)
+            return None
+        
+        if self.show_progress:
+            new_screen = self.reset_button.handle_event(event)
+            if new_screen:
+                return new_screen
+        
         new_screen = self.pitch_button.handle_event(event)
         if new_screen:
             return new_screen
@@ -72,15 +92,24 @@ class mainScreen:
                 data['first_time'] = False
                 save_data(data)
 
+                self.pitch_button.hover_enabled = True
+                self.rhythm_button.hover_enabled = True
+                self.pitch_button.click_enabled = True
+                self.rhythm_button.click_enabled = True
+
+            elif self.exit_box.collidepoint(event.pos):
+                self.close_progress()
+
     def show_instructions(self):
         #black box background
         y = height/3
         box_width = width * 0.75
-        black_box = pygame.Surface((box_width, height * 0.6))
+        box_height = height * 0.6
+        black_box = pygame.Surface((box_width, box_height))
         black_box.fill((255, 0, 255))
-        black_box.set_colorkey((255, 0, 255)) 
-        pygame.draw.rect(black_box, (0, 0, 0), (0, 0, box_width, height * 0.6), border_radius=15)
-        black_box.set_alpha(220) 
+        black_box.set_colorkey((255, 0, 255)) #makes this colour transparent
+        pygame.draw.rect(black_box, (0, 0, 0), (0, 0, box_width, box_height), border_radius=15)
+        black_box.set_alpha(220) #transparency
         self.screen.blit(black_box, (width/2 - box_width / 2, y))
         
         #X in the corner
@@ -118,42 +147,151 @@ class mainScreen:
         self.screen.blit(self.icon_meaning_img, (width/2 - width*(0.61)/2, height*(0.7)))
 
     def show_progress(self):
-        print('PROGESS')
+        self.open_progress = True
+
+        self.pitch_button.hover_enabled = False
+        self.rhythm_button.hover_enabled = False
+
+        self.pitch_button.click_enabled = False
+        self.rhythm_button.click_enabled = False
+    
+    def close_progress(self):
+        self.open_progress = False
+        self.pitch_button.hover_enabled = True
+        self.rhythm_button.hover_enabled = True
+
+        self.pitch_button.click_enabled = True
+        self.rhythm_button.click_enabled = True
+    
+    def display_progress(self):
+        #box for showing game progress
+        box_width = width * 0.6
+        box_height = height * 0.68
+        box_x = width/2 - box_width/2
+        box_y = height/2 - box_height/2
+        progress_box = pygame.Surface((box_width, box_height))
+        progress_box.fill((255, 0, 255))
+        progress_box.set_colorkey((255, 0, 255)) 
+        pygame.draw.rect(progress_box, (0, 0, 0), (0, 0, box_width, box_height), border_radius=15)
+        progress_box.set_alpha(220) 
+        self.screen.blit(progress_box, (box_x, box_y))
+
+        #text
+        progress_title = self.font_big.render("Your Progress", True, (255, 255, 255))
+        progress_subtitle = self.font.render("Rhythm Levels                                           Pitch Levels", True, (255, 255, 255))
+
+        y = box_y + 25
+        title_rect = progress_title.get_rect(midtop=(width/2, y))
+        y += 45
+        subtitle_rect = progress_subtitle.get_rect(midtop=(width/2, y))
+
+        self.screen.blit(progress_title, title_rect)
+        self.screen.blit(progress_subtitle, subtitle_rect)
+
+        start_y = y + 40
+
+        for level in rhythmlevels:
+            self.save = load_save()
+            if self.save['completed_lessons'].get(level['title'], False):
+                progress_text = self.font_small.render(f'Level {level["order"]}: {level["title"]}', True, (255, 255, 255))
+            else: 
+                progress_text = self.font_small.render("?", True, (255, 255, 255))
+
+            self.screen.blit(progress_text, (box_x + 30, start_y))
+            start_y += 35
+
+        start_y = y + 40
+
+        for level in pitchlevels:
+            self.save = load_save()
+            if self.save['completed_lessons'].get(level['title'], False):
+                progress_text = self.font_small.render(f'Level {level["order"]}: {level["title"]}', True, (255, 255, 255))
+            else: 
+                progress_text = self.font_small.render("?", True, (255, 255, 255))
+
+            self.screen.blit(progress_text, (width/2 + 30, start_y))
+            start_y += 35
+        
+        #X in the top right corner
+        y = box_y + 25
+        self.exit_box.topleft = (box_x + box_width - 40, y)
+        pygame.draw.rect(self.screen, (200, 50, 50), self.exit_box, border_radius=5)
+
+        x_text = self.font.render("X", True, (255, 255, 255))
+        x_rect = x_text.get_rect(center=self.exit_box.center)
+        self.screen.blit(x_text, x_rect)
+
+        #reset in the top left corner
+        self.reset_button.draw(self.screen)
+
+    def ask_reset(self):
+        self.confirm_reset = True
+    
+    def draw_reset_confirmation(self):
+        box_width = width * 0.5
+        box_height = height * 0.25
+        box = pygame.Surface((box_width, box_height))
+        box.fill((0, 0, 0))
+        pygame.draw.rect(box, (255, 255, 255), box.get_rect(), 3, border_radius=15)
+        self.screen.blit(box, (width/2 - box_width/2, height/2 - box_height/2))
+
+        text = self.font.render("Are you sure you want to reset all your progress?", True, (255, 255, 255))
+        note = self.font_small.render("NOTE: This action cannot be undone.", True, (255, 0, 0))
+
+        self.screen.blit(text, (width/2 - text.get_width()/2, height/2 - 50))
+        self.screen.blit(note, (width/2 - note.get_width()/2, height/2 - 10))
+        self.yes_button.draw(self.screen)
+        self.no_button.draw(self.screen)  
 
     def reset_game(self):
-        pass
-        #reset everything in the json file and starts from the very beginning including show_instructions
-        #data['first_time'] = True
+        reset_user_progress()
+        self.confirm_reset = False
+
+        self.save = load_save()
+
+        self.first_time = True
+        self.open_progress = False
+
+    def cancel_reset(self):
+        self.confirm_reset = False
 
     def draw(self):
-            save = load_save()
-            self.pitch_button.enabled = save["completed_lessons"].get("Final Rhythm Practice", False)
+        save = load_save()
+        self.pitch_button.enabled = save["completed_lessons"].get("Final Rhythm Practice", False)
 
-            self.screen.blit(self.logo, (width/2 - width*(0.43)/2, height*(0.075)))
-            self.screen.blit(self.select, (width/2 - width*(0.16)/2, height*(0.39)))
+        self.screen.blit(self.logo, (width/2 - width*(0.43)/2, height*(0.075)))
+        self.screen.blit(self.select, (width/2 - width*(0.16)/2, height*(0.39)))
 
-            self.pitch_button.draw(self.screen)
-            self.rhythm_button.draw(self.screen)
-            self.progress_button.draw(self.screen)
+        self.pitch_button.draw(self.screen)
+        self.rhythm_button.draw(self.screen)
+        self.progress_button.draw(self.screen)
 
-            if self.first_time == True:
-                self.show_instructions()
+        if self.first_time:
+            self.show_instructions()
+        else:
+            if self.open_progress:
+                self.display_progress()
+
+            if self.confirm_reset:
+                self.draw_reset_confirmation()
 
 class Button:
     def __init__(self, x, y, image, size, action=None):
         self.original = image
         self.normal = pygame.transform.smoothscale(image, size)
-        self.sfx = pygame.mixer.Sound('soundExcerpts/sfx/button_click_sfx.mp3')
-
+        self.rect = self.normal.get_rect(topleft=(x, y))
+        
         hover_size = (int(size[0]*1.1), int(size[1]*1.1))
         self.hover = pygame.transform.smoothscale(image, hover_size)
-
-        self.rect = self.normal.get_rect(topleft=(x, y))
         self.hover_rect = self.hover.get_rect(center=self.rect.center)
+
+        self.sfx = pygame.mixer.Sound('soundExcerpts/sfx/button_click_sfx.mp3')
 
         self.action = action
         self.enabled = True
         self.disabled = self.normal.copy()
+        self.hover_enabled = True
+        self.click_enabled = True
     
     def draw(self, screen):
             mouse_pos = pygame.mouse.get_pos()
@@ -161,7 +299,7 @@ class Button:
             if not self.enabled:
                 self.disabled = tint_icon(self.normal.copy(), (120, 120, 120))
                 screen.blit(self.disabled, self.rect)
-            elif self.rect.collidepoint(mouse_pos):
+            elif self.hover_enabled and self.rect.collidepoint(mouse_pos):
                 screen.blit(self.hover, self.hover_rect)
             else:
                 screen.blit(self.normal, self.rect)
@@ -172,6 +310,36 @@ class Button:
 
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             if self.rect.collidepoint(event.pos):
+                if self.click_enabled:
+                    if self.action:
+                        self.sfx.play()
+                        return self.action()
+
+class textButton:
+    def __init__(self, text, position : tuple, font, normalColour, hoverColour, action=None):
+        self.text = text
+        self.font = font
+        self.action = action
+
+        self.normal_colour = normalColour
+        self.hover_colour = hoverColour
+
+        self.rect = pygame.Rect(0, 0, 0, 0)
+        self.rect.center = position
+
+    def draw(self, screen):
+        mouse_pos = pygame.mouse.get_pos()
+        if self.rect.collidepoint(mouse_pos):
+            colour = self.hover_colour
+        else:
+            colour = self.normal_colour
+
+        text_surface = self.font.render(self.text, True, colour)
+        self.rect = text_surface.get_rect(center=self.rect.center)
+        screen.blit(text_surface, self.rect)
+
+    def handle_event(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if self.rect.collidepoint(event.pos):
                 if self.action:
-                    self.sfx.play()
                     return self.action()

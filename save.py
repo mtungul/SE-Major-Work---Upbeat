@@ -9,6 +9,7 @@ DEFAULT_SAVE = {
     'completed_lessons': {},
     'most_recent_score': {},
     'highest_score': {},
+    'rhythm_practice_points': {}
 }
 
 def load_save():
@@ -28,7 +29,7 @@ def load_save():
 
 def save_data(data):
     with open(SAVE_FILE, 'w') as file:
-        json.dump(data, file, indent=3)
+        json.dump(data, file, indent=6)
 
 def complete_lesson(lesson_title):
     data = load_save()
@@ -52,3 +53,11 @@ def save_highest_score(lesson_title, difficulty, score):
     if score > previous_highest:
         data['highest_score'][lesson_title][difficulty] = score
     save_data(data)
+
+def save_rhythm_points(lesson_title, points):
+    data = load_save()
+    data['rhythm_practice_points'][lesson_title] = points
+    save_data(data)
+
+def reset_user_progress():
+    save_data(copy.deepcopy(DEFAULT_SAVE))

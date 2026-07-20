@@ -35,6 +35,7 @@ class practiceScreen(baseScreen):
         self.incorrect_sound = pygame.mixer.Sound('soundExcerpts/incorrectSFX.mp3')
 
     def handle_event(self, event):
+        self.save = load_save()
         if self.save['completed_lessons'].get(self.data['title'], False):
             new_screen = super().handle_event(event)
             if new_screen:
@@ -52,9 +53,15 @@ class practiceScreen(baseScreen):
             new_screen = self.back_button.handle_event(event)
             if new_screen:
                 return new_screen
+            new_screen = self.home_button.handle_event(event)
+            if new_screen:
+                return new_screen
             return None
         
         elif self.state == "practice":
+            new_screen = self.back_button.handle_event(event)
+            if new_screen:
+                return new_screen
             for button in self.answer_buttons:
                 if button.clicked(event): #method in answerButton class
                     if button.correct:
@@ -83,7 +90,7 @@ class practiceScreen(baseScreen):
         
         elif self.state == 'finished':
             if self.completed:
-                    return self.next_button.handle_event(event)
+                return self.next_button.handle_event(event)
             return None
         
         return super().handle_event(event)
@@ -174,10 +181,10 @@ class practiceScreen(baseScreen):
             accuracy = round(6/self.total_questions*100)
 
             if self.current_score == 6:
-                self.completed = True
                 complete_lesson(self.data["title"])
                 save_recent_score(self.data["title"], 'Normal', accuracy)
                 save_highest_score(self.data["title"], 'Normal', accuracy)
+                self.completed = True
 
             line_width = width*(97/108)
             lines = wrap_text("You have completed all 6 questions! Click NEXT to proceed to the next level.", self.font, line_width)

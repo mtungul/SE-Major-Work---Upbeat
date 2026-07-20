@@ -1,40 +1,7 @@
 {
-   "first_time": false,
-   "completed_lessons": {
-      "Note Values Practice": true,
-      "Rest Notes Practice": true,
-      "Time Signature Practice": true,
-      "Final Rhythm Practice": true,
-      "Song #3 : Jingle Bells": true
-   },
-   "most_recent_score": {
-      "Note Values Practice": {
-         "Easy": 100,
-         "Medium": 100,
-         "Hard": 94
-      },
-      "Rest Notes Practice": {
-         "Easy": 100,
-         "Medium": 83,
-         "Hard": 100
-      },
-      "Time Signature Practice": {
-         "None": 100
-      },
-      "Final Rhythm Practice": {
-         "Easy": 100,
-         "Medium": 75,
-         "Hard": 100
-      }
-   },
-   "highest_score": {
-      "Note Values Practice": {
-         "Easy": 100,
-         "Medium": 100,
-         "Hard": 94
-      },
-      "Time Signature Practice": {
-         "None": 100
-      }
-   }
+      "first_time": true,
+      "completed_lessons": {},
+      "most_recent_score": {},
+      "highest_score": {},
+      "rhythm_practice_points": {}
 }

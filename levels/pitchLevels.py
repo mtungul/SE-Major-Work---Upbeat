@@ -30,7 +30,7 @@ pitchlevels = [
     'title' : 'C Major Scale',
     'text' : (
         "A scale is an ordered sequence of notes that follows a specific pattern between a note and its octave. "
-        "The two fundamental types of scales are major and minor, where major sounds 'happy', and minor sounds 'sad'. "
+        "The two main types of scales are major and minor, where major sounds 'happy', and minor sounds 'sad'. "
         "The C major scale is one of these many scales, consisting of notes C D E F G A B C. These are all the white keys on a piano."),
     'icon' : 'lesson',
     'img' : 'piano.png',
@@ -46,7 +46,7 @@ pitchlevels = [
 
     { # level 3
     'section' : 'pitch',
-    'order' : 3,
+    'order' : 4,
     'lessonType' : 'lesson',
     'title' : 'C Major Scale cont.',
     'text' : (
@@ -59,19 +59,19 @@ pitchlevels = [
 
     { # level 4
     'section' : 'pitch',
-    'order' : 4,
+    'order' : 5,
     'lessonType' : 'lesson',
     'title' : 'How to Read Treble Clef',
     'text' : (
         "An easy way to read treble clef is by remembering that the gaps spell the word 'FACE', "
-        "and the lines can be remembered using the mnemonic 'Every Good Boy Deserves Fruit'."),
+        "and the lines can be remembered using the saying, 'Every Good Boy Deserves Fruit'."),
     'img' : 'treble_clef_chart.png',
     'icon' : 'lesson',
     },
 
     { # level 5
     'section' : 'pitch',
-    'order' : 5,
+    'order' : 6,
     'lessonType' : 'questionPractice',
     'title' : 'C Major Scale Practice',
     'text' : (
@@ -151,7 +151,7 @@ pitchlevels = [
 
     { # level 6
     'section' : 'pitch',
-    'order' : 6,
+    'order' : 7,
     'lessonType' : 'pitchPianoPractice',
     'title' : 'Song #1 : Mary Had a Little Lamb',
     'text' : (
@@ -174,7 +174,7 @@ pitchlevels = [
 
     { # level 7
     'section' : 'pitch',
-    'order' : 7,
+    'order' : 8,
     'lessonType' : 'pitchPianoPractice',
     'title' : 'Song #2 : Twinkle Twinkle Little Star',
     'text' : (
@@ -201,12 +201,12 @@ pitchlevels = [
 
     { # level 8
     'section' : 'pitch',
-    'order' : 8,
+    'order' : 9,
     'lessonType' : 'pitchPianoPractice',
     'title' : 'Song #3 : Jingle Bells',
     'text' : (
-        "This is the last Practice Level of Upbeat! In the following sheet music, you will see note heads coloured in blue towards the end. "
-        "This will be what's called a harmony. A harmony is when two or more notes are played at the same time and create a pleasing sound. "
+        "This is the last Practice Level of Upbeat! In the following sheet music, you will see notes coloured in blue towards the end. "
+        "This is a harmony. A harmony is when two or more notes are played at the same time and create a pleasing sound. "
         "NOTE: Playing the harmony is optional (although is recommended). If you do, make sure to keep playing the melody as well."),
     'icon' : 'quaver',
     'sheetMusic' : 'JingleBells_sheetmusic.png',
@@ -233,10 +233,12 @@ pitchlevels = [
 
     { # level 9
     'section' : 'pitch',
-    'order' : 9,
+    'order' : 10,
     'lessonType' : 'end',
-    'title' : 'You have successfully completed the Pitch Section!',
-    'text' : '',
+    'title' : 'Pitch Section Complete!',
+    'text' : (
+        'Congratulations! You have fully completed the pitch section of Upbeat, '
+        'and have also completed the entire game! You are able to go back to any level you like and re-attempt any practice levels as well.'),
     'icon' : 'star',
     'img' : None,
     }
