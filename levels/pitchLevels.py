@@ -29,7 +29,7 @@ pitchlevels = [
     'lessonType' : 'lesson',
     'title' : 'C Major Scale',
     'text' : (
-        "A scale is an ordered sequence of notes that follows a specific pattern between a note and its octave. "
+        "A scale is an ordered sequence of notes that follow a specific pattern between a note and its octave. "
         "The two main types of scales are major and minor, where major sounds 'happy', and minor sounds 'sad'. "
         "The C major scale is one of these many scales, consisting of notes C D E F G A B C. These are all the white keys on a piano."),
     'icon' : 'lesson',

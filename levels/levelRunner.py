@@ -1,7 +1,7 @@
 import pygame
 from save import load_save
 
-class levelRunner:
+class levelRunner: #level runner class is what controls the order and which levels are being shown
     def __init__(self, screen, level_data, icons):
         def get_order(level):
             return level['order']
@@ -39,7 +39,7 @@ class levelRunner:
             return practiceScreen(self.screen, step, self, self.icons)
     
     def next_level(self):
-        pygame.mixer.stop()
+        pygame.mixer.stop() #all sounds stop when changing levels e.g. sound excerpts
         self.completed[self.index] = True #current level is considered as 'completed'
 
         #set the max unlocked level to mark progress

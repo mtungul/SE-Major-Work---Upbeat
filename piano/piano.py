@@ -1,6 +1,7 @@
 import pygame
 import piano.piano_lists as pl
 from pygame import mixer
+from utils.config import resource_path
 
 fps = 60
 timer = pygame.time.Clock()
@@ -27,7 +28,7 @@ class Piano:
         self.width = width
         self.height = height
         self.pos = pos
-        self.key_font = pygame.font.Font("fonts/Vera.ttf", 16)
+        self.key_font = pygame.font.Font(resource_path('fonts/Vera.ttf'), 16)
 
         self.white_key_width = 60
         self.black_key_width = 40
@@ -55,10 +56,10 @@ class Piano:
 
         #add sound files to sound arrays
         for note in self.white_notes:
-            self.white_sounds.append(mixer.Sound(f"piano/piano_notes/{note}.wav"))
+            self.white_sounds.append(mixer.Sound(resource_path(f"piano/piano_notes/{note}.wav")))
 
         for note in self.black_notes:
-            self.black_sounds.append(mixer.Sound(f"piano/piano_notes/{note}.wav"))
+            self.black_sounds.append(mixer.Sound(resource_path(f"piano/piano_notes/{note}.wav")))
     
     def draw_piano(self):
         self.white_keys = []

@@ -1,11 +1,9 @@
-import os
 import pygame
-import random
 from piano.piano import Piano
 from save import complete_lesson, load_save
 from startScreen import Button
 from utils.text import wrap_text
-from utils.config import width, height
+from utils.config import width, height, resource_path
 from screens.baseScreen import baseScreen
 
 class practiceScreen(baseScreen):
@@ -25,20 +23,20 @@ class practiceScreen(baseScreen):
         self.feedback_colour = (0, 0, 0)
         self.feedback_time = pygame.time.get_ticks()
 
-        #load buttons
-        self.beginButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'buttons', 'begin_btn.png')).convert_alpha()
-        self.begin_button = Button(width*(31/72), height/2, self.beginButton, (width*(5/36), height*(1/10)), self.set_state_practice)
-        self.assistON_btn = pygame.image.load(os.path.join(os.getcwd(),'img', 'buttons', 'assistON_btn.png')).convert_alpha()
-        self.assistOFF_btn = pygame.image.load(os.path.join(os.getcwd(),'img', 'buttons', 'assistOFF_btn.png')).convert_alpha()
-        self.resetbtn = pygame.image.load(os.path.join(os.getcwd(),'img', 'buttons', 'reset_btn.png')).convert_alpha()
-        self.reset_btn = Button(width*(0.83), height*(0.07), self.resetbtn, (width*(0.1), height*(0.05)), self.reset_progress)
+        #load images / buttons
+        self.beginButton = pygame.image.load(resource_path('img/buttons/begin_btn.png')).convert_alpha()
+        self.assistON_btn = pygame.image.load(resource_path('img/buttons/assistON_btn.png')).convert_alpha()
+        self.assistOFF_btn = pygame.image.load(resource_path('img/buttons/assistOFF_btn.png')).convert_alpha()
+        self.resetbtn = pygame.image.load(resource_path('img/buttons/reset_btn.png')).convert_alpha()
+        self.keyboard_img_original = pygame.image.load(resource_path('img/keyboard_piano.png')).convert_alpha()
 
-        self.keyboard_img_original = pygame.image.load(os.path.join(os.getcwd(),'img', 'keyboard_piano.png')).convert_alpha()
+        self.begin_button = Button(width*(31/72), height/2, self.beginButton, (width*(5/36), height*(1/10)), self.set_state_practice)
+        self.reset_btn = Button(width*(0.83), height*(0.07), self.resetbtn, (width*(0.1), height*(0.05)), self.reset_progress)
 
         self.update_assist_btn()
 
     def handle_event(self, event):
-        if self.save['completed_lessons'].get(self.data['title'], False):
+        if self.save['completed_lessons'].get(self.data['title'], False): #all buttons work after level is already completed
             new_screen = super().handle_event(event)
             if new_screen:
                 return new_screen
@@ -84,11 +82,11 @@ class practiceScreen(baseScreen):
         if self.toggle_assist == False:
             assist_btn_image = self.assistOFF_btn
             assist_btn_action = self.assist_on
-            image_path = os.path.join(os.getcwd(), 'img', f'sheetMusic/{self.data["sheetMusic"]}')
+            image_path = resource_path(f'img/sheetMusic/{self.data["sheetMusic"]}')
         else:
             assist_btn_image = self.assistON_btn
             assist_btn_action = self.assist_off
-            image_path = os.path.join(os.getcwd(), 'img', f'sheetMusic/{self.data["sheetMusic_assist"]}')
+            image_path = resource_path(f'img/sheetMusic/{self.data["sheetMusic_assist"]}')
 
         self.assist_btn = Button(width*(0.83), height*(0.13), assist_btn_image, (width*(0.1), height*(0.05)), assist_btn_action)
         self.sheetMusic_original = pygame.image.load(image_path).convert_alpha()
@@ -124,7 +122,7 @@ class practiceScreen(baseScreen):
         else:
             return
     
-    def show_bar_num(self):        
+    def show_bar_num(self): #if assist is on, it shows the user what bar they are up to in case they are struggling
         total_beats = 0
         self.bar = 1
         for beats_in_bar in self.data['barLength']:
@@ -137,7 +135,7 @@ class practiceScreen(baseScreen):
             self.bar = len(self.data['barLength'])
         return self.bar
     
-    def reset_progress(self):
+    def reset_progress(self): #if user forgets where they are or want to start from the beginning they can reset
         self.current_index = 0
         self.bar = 1
 
@@ -190,13 +188,13 @@ class practiceScreen(baseScreen):
                         self.state = 'finished'
             
             if self.toggle_assist:
-                bar_font = pygame.font.Font('fonts/Vera.ttf', 14)
+                bar_font = pygame.font.Font(resource_path('fonts/Vera.ttf'), 14)
                 bar_num = self.show_bar_num()
                 text = bar_font.render(f"You are up to Bar:{bar_num}", True, (0, 0, 0))
                 self.screen.blit(text, (width*(0.08), height*(0.33)))
         
-            if self.state == 'finished':
-                finish_font = pygame.font.Font('fonts/Vera.ttf', 25)
+            if self.state == 'finished': #client requested for different affirmations at the end of each practice level
+                finish_font = pygame.font.Font(resource_path('fonts/Vera.ttf'), 25)
                 if self.data['order'] == 7:
                     text = finish_font.render("Great Job! You're a Star!", True, (0, 0, 0))
                     pos = (width*(0.4), height*(0.91))

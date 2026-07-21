@@ -1,4 +1,4 @@
-def wrap_text(text, font, max_width): #i searched this up because pygame doesn't have automatic text wrapping like html
+def wrap_text(text, font, max_width): #pygame doesn't have automatic text wrapping like html
     words = text.split(' ')
     lines = []
     current_line = ""

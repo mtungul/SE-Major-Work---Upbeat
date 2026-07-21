@@ -1,10 +1,9 @@
-import os
 import pygame
 from save import complete_lesson
 from metronome import metronome
 from startScreen import Button
 from utils.text import wrap_text
-from utils.config import width, height
+from utils.config import width, height, resource_path
 from utils.excerpts import excerptPlayer
 from screens.baseScreen import baseScreen
 
@@ -12,12 +11,12 @@ class lessonScreen(baseScreen):
     def __init__(self, screen, step_data, runner, icons):
         super().__init__(screen, step_data, runner, icons)
 
-        self.playButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'buttons', 'play_button.png')).convert_alpha()
+        self.playButton = pygame.image.load(resource_path('img/buttons/play_button.png')).convert_alpha()
 
         #load level images
         self.lesson_image = None
         if self.data.get("img"):
-            image_path = os.path.join(os.getcwd(), 'img', self.data["img"])
+            image_path = resource_path(f'img/{self.data["img"]}')
             self.lesson_image_original = pygame.image.load(image_path).convert_alpha()
             self.lesson_image = pygame.transform.smoothscale(self.lesson_image_original, (544, 260))
 
@@ -27,7 +26,7 @@ class lessonScreen(baseScreen):
         self.excerpt_images = []
         
         for image_name in self.data.get("excerptImg", []):
-            image_path = os.path.join(os.getcwd(), 'img', image_name)
+            image_path = resource_path(f'img/{image_name}')
             image_original = pygame.image.load(image_path).convert_alpha()
             image = pygame.transform.smoothscale(image_original, (501, 91))
             self.excerpt_images.append(image)
@@ -73,19 +72,19 @@ class lessonScreen(baseScreen):
         self.draw_layout() #inherited from baseScreen
 
         #draw text
-        line_width = width*(97/108)
+        line_width = width*(0.9)
         lines = wrap_text(self.data["text"], self.font, line_width)
 
         y = height/3
         for line in lines:
             text = self.font.render(line, True, (0, 0, 0))
-            self.screen.blit(text, (width/18, y))
+            self.screen.blit(text, (width*(0.06), y))
             y += 40
 
         #images
         if self.lesson_image:
             if self.excerpt_items or self.metronome:
-                self.screen.blit(self.lesson_image, (width/12, y + 5))
+                self.screen.blit(self.lesson_image, (width*(0.08), y + 5))
             else:
                 lesson = self.data.get("order")
                 section = self.data.get("section")
@@ -94,7 +93,7 @@ class lessonScreen(baseScreen):
                     self.screen.blit(self.lesson_image, (width*(0.1), y-65))
                 else:
                     self.lesson_image = pygame.transform.smoothscale(self.lesson_image_original, (width*(0.73), height*(0.40)))
-                    self.screen.blit(self.lesson_image, (width/7, y + 5))
+                    self.screen.blit(self.lesson_image, (width*(0.14), y + 5))
 
         #listening excerpts
         if self.excerpt_items:

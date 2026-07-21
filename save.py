@@ -2,7 +2,10 @@ import os
 import json
 import copy
 
-SAVE_FILE = 'gameSaves/save.json'
+SAVE_DIR = os.path.expanduser("~/Library/Application Support/Upbeat")
+SAVE_FILE = os.path.join(SAVE_DIR, "save.json")
+
+os.makedirs(SAVE_DIR, exist_ok=True)
 
 DEFAULT_SAVE = {
     'first_time': True,
@@ -23,8 +26,11 @@ def load_save():
             data['most_recent_score'] = {}
         if 'highest_score' not in data:
             data['highest_score'] = {}
+        if 'rhythm_practice_points' not in data:
+            data['rhythm_practice_points'] = {}
         return data
     
+    save_data(copy.deepcopy(DEFAULT_SAVE))
     return copy.deepcopy(DEFAULT_SAVE)
 
 def save_data(data):

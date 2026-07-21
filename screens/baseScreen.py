@@ -1,32 +1,31 @@
-import os
 import pygame
 from save import load_save
 from startScreen import Button, mainScreen
 from utils.icons import tint_icon 
-from utils.config import width, height
+from utils.config import width, height, resource_path
 
-class baseScreen:
+class baseScreen: #base screen is NOT a type of lesson, instead provides all the features each type of lesson share
     def __init__(self, screen, step_data, runner, icons):
         self.screen = screen
-        self.font = pygame.font.Font('fonts/Vera.ttf', 20)
+        self.font = pygame.font.Font(resource_path('fonts/Vera.ttf'), 20)
         self.data = step_data
         self.runner = runner
         self.icons = icons
         self.icon_hitbox = []
         self.save = load_save()
 
-        #load and size buttons
-        self.nextButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'buttons', 'next_button.png')).convert_alpha()
-        self.backButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'buttons', 'back_button.png')).convert_alpha()
+        #load and make buttons
+        self.nextButton = pygame.image.load(resource_path('img/buttons/next_button.png')).convert_alpha()
+        self.backButton = pygame.image.load(resource_path('img/buttons/back_button.png')).convert_alpha()
+        self.backHomeButton = pygame.image.load(resource_path('img/buttons/back_to_home.png')).convert_alpha()
+        self.homeBtn = pygame.image.load(resource_path('img/buttons/home.png')).convert_alpha()
+
         self.next_button = Button(width*(0.79), height*(0.88), self.nextButton, (width*(0.14), height*(0.1)), self.go_next)
         self.back_button = Button(width*(0.06), height*(0.88), self.backButton, (width*(0.14), height*(0.1)), self.go_back)
-        
-        self.backHomeButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'buttons', 'back_to_home.png')).convert_alpha()
         self.back_home_button = Button(width*(0.72), height*(0.89), self.backHomeButton, (width*(0.21), height*(0.085)), self.go_home)
-        self.homeBtn = pygame.image.load(os.path.join(os.getcwd(),'img', 'buttons', 'home.png')).convert_alpha()
         self.home_button = Button(width*(0.94), height*(0.01), self.homeBtn, (width*(0.05), height*(0.09)), self.go_home)
 
-        self.finish_section_sfx = pygame.mixer.Sound('soundExcerpts/sfx/section_complete_sfx.mp3')
+        self.finish_section_sfx = pygame.mixer.Sound(resource_path('soundExcerpts/sfx/section_complete_sfx.mp3'))
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -40,7 +39,7 @@ class baseScreen:
         if new_screen:
             return new_screen
 
-        if self.runner.index != 0:
+        if self.runner.index != 0: #back button doesn't work on level 1
             new_screen = self.back_button.handle_event(event)
             if new_screen:
                 return new_screen
@@ -71,7 +70,7 @@ class baseScreen:
             else:
                 icon = self.icons.pitch_icons[icon_name]
 
-            if i == self.runner.index: 
+            if i == self.runner.index: #tint icon based on completion status
                 icon = tint_icon(icon, (255, 255, 255)) #current level
             elif save["completed_lessons"].get(step["title"], False):
                 icon = tint_icon(icon, (215, 215, 215)) #completed levels
@@ -88,31 +87,30 @@ class baseScreen:
     def go_back(self):
         return self.runner.back_level()
     
-    def go_home(self):
+    def go_home(self): #house button in the top right corner
         pygame.mixer.stop()
         return mainScreen(self.screen, self.icons)
 
     def draw_layout(self):
         self.draw_icon_row()
-                                    #numbers = colour (3), position (2), size(2)   
-        pygame.draw.rect(self.screen, (255, 255, 255), (width/27, height*(5/24), width*(25/27), height*(2/3)), border_radius=20) 
+        pygame.draw.rect(self.screen, (255, 255, 255), (width*(0.04), height*(0.21), width*(0.93), height*(0.67)), border_radius=20) 
         
         #draw title
-        title_font = pygame.font.Font('fonts/new_amsterdam/NewAmsterdam.ttf', 40)
+        title_font = pygame.font.Font(resource_path('fonts/new_amsterdam/NewAmsterdam.ttf'), 40)
         title = title_font.render(self.data["title"], True, (0, 0, 0))
-        self.screen.blit(title, (width/18, height*(7/30)))
+        self.screen.blit(title, (width*(0.06), height*(0.23)))
 
-        #next and back buttons  +  'back to home' button after last level of section + show recent and highest score
+        #display scores if user is on the last level
         if (self.data['order'] == 11 and self.data['section'] == 'rhythm') or (self.data['order'] == 10 and self.data['section'] == 'pitch'):
             
-            if self.data['order'] == 11 and self.data['section'] == 'rhythm':
+            if self.data['order'] == 11 and self.data['section'] == 'rhythm': #if last rhythm level:
                 lesson_names = [ #display name and original name
                     ("Note Values", "Note Values Practice"),
                     ("Rest Note Values", "Rest Notes Practice"),
                     ("Time Signature", "Time Signature Practice"),
                     ("Final", "Final Rhythm Practice"),
                 ]
-            elif self.data['order'] == 10 and self.data['section'] == 'pitch':
+            elif self.data['order'] == 10 and self.data['section'] == 'pitch': #if last pitch level:
                 lesson_names = [
                     ("C Major Scale", "C Major Scale Practice"),
                 ]   
@@ -122,8 +120,7 @@ class baseScreen:
             self.finish_section_sfx = None
 
             #show most recent scores
-            score_title_font = pygame.font.Font('fonts/new_amsterdam/NewAmsterdam.ttf', 40)
-            score_font = pygame.font.Font('fonts/new_amsterdam/NewAmsterdam.ttf', 30)
+            score_font = pygame.font.Font(resource_path('fonts/new_amsterdam/NewAmsterdam.ttf'), 30)
 
             x_left = width * 0.07
             x_centre = width * 0.28
@@ -131,9 +128,9 @@ class baseScreen:
             y = height * 0.46
 
             #titles (row 1)
-            practice_text = score_title_font.render("Practice Level:", True, (0, 0, 0))
-            recent_text = score_title_font.render("Your Recent Scores:", True, (0, 0, 0))
-            highest_text = score_title_font.render("Your Highest Scores:", True, (0, 0, 0))
+            practice_text = title_font.render("Practice Level:", True, (0, 0, 0))
+            recent_text = title_font.render("Your Recent Scores:", True, (0, 0, 0))
+            highest_text = title_font.render("Your Highest Scores:", True, (0, 0, 0))
 
             self.screen.blit(practice_text, (x_left, y))
             self.screen.blit(recent_text, (x_centre, y))
@@ -186,12 +183,14 @@ class baseScreen:
                 y_start += 50
                 x_right = width * 0.65
 
+            #since last level draw a 'back home button' instead of 'next'
             self.back_home_button.draw(self.screen)  
         else:
+            #always display the next button if it's just a content reading lesson or the lesson has already been completed
             if self.data['lessonType'] in ('lesson', 'reading') or self.save['completed_lessons'].get(self.data['title'], False):
                 self.next_button.draw(self.screen)  
 
-        if self.runner.index != 0:
+        if self.runner.index != 0: #don't display back button on level 1
             self.back_button.draw(self.screen)
 
         #home button

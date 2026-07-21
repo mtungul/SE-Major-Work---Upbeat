@@ -1,9 +1,8 @@
-import os
 import pygame
 import random
 from save import complete_lesson, load_save, save_recent_score, save_highest_score
 from utils.text import wrap_text
-from utils.config import width, height
+from utils.config import width, height, resource_path
 from startScreen import Button
 from screens.baseScreen import baseScreen
 
@@ -16,23 +15,25 @@ class practiceScreen(baseScreen):
         self.save = load_save()
         
         #buttons
-        self.beginButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'buttons', 'begin_btn.png')).convert_alpha()
+        self.beginButton = pygame.image.load(resource_path('img/buttons/begin_btn.png')).convert_alpha()
         self.begin_button = Button(width*(31/72), height/2, self.beginButton, (width*(5/36), height*(1/10)), self.start_quiz)
 
         self.answer_buttons = []
 
         if self.data['section'] == 'rhythm':
             answer_key = ['A', 'B', 'C', 'D']
-        elif self.data['section'] == 'pitch':
-            answer_key = ['1', '2', '3', '4']        
+        elif self.data['section'] == 'pitch': 
+            answer_key = ['1', '2', '3', '4']   
+            #need to change to numbers so user doesn't get confused with the note answers
+            #e.g. A) C  B) G  C) A  D) B     
             
         for i in range(4):
             self.answer_buttons.append(answerButton(answer_key[i], width*(0.39) + i * 80, height*(0.72), 60, 60))
 
-        #sound
+        #sounds
         self.answer_channel = pygame.mixer.Channel(1)
-        self.correct_sound =  pygame.mixer.Sound('soundExcerpts/correctSFX.mp3')
-        self.incorrect_sound = pygame.mixer.Sound('soundExcerpts/incorrectSFX.mp3')
+        self.correct_sound =  pygame.mixer.Sound(resource_path('soundExcerpts/correctSFX.mp3'))
+        self.incorrect_sound = pygame.mixer.Sound(resource_path('soundExcerpts/incorrectSFX.mp3'))
 
     def handle_event(self, event):
         self.save = load_save()
@@ -70,15 +71,15 @@ class practiceScreen(baseScreen):
                     else:
                         self.answer_channel.play(self.incorrect_sound)
                         question_index = self.questions_to_ask[self.current_question]
-                        self.wrong_answers.append(question_index)
+                        self.wrong_answers.append(question_index) #add incorrectly answered questions to an array of questions that gets re-asked after first 6 questions
 
                     self.current_question += 1
                     self.total_questions += 1
 
-                    if self.current_question < len(self.questions_to_ask):
+                    if self.current_question < len(self.questions_to_ask): #cycle through all 6 initial questions
                         self.load_question()
                     else:
-                        if self.wrong_answers:
+                        if self.wrong_answers: #re-ask incorrectly answered questions
                             self.questions_to_ask = self.wrong_answers[:]
                             self.wrong_answers.clear()
                             self.current_question = 0
@@ -119,7 +120,7 @@ class practiceScreen(baseScreen):
         #load image
         self.question_image = None
         if question["image"]:
-            image_path = os.path.join(os.getcwd(), "img", f'questionPracticeImg/{question["image"]}')
+            image_path = resource_path(f'img/questionPracticeImg/{question["image"]}')
             image = pygame.image.load(image_path).convert_alpha()
             self.question_image = pygame.transform.smoothscale(image, (200, 200))   
          
@@ -127,44 +128,45 @@ class practiceScreen(baseScreen):
         self.draw_layout()
         
         if self.state == 'start':
-            line_width = width*(97/108)
+            line_width = width*(0.9)
             lines = wrap_text(self.data["text"], self.font, line_width)
 
             y = height/3
             for line in lines:
                 text = self.font.render(line, True, (0, 0, 0))
-                self.screen.blit(text, (width/18, y))
+                self.screen.blit(text, (width*(0.06), y))
                 y += 40
             
             self.begin_button.draw(self.screen)  
 
             save = load_save()
-            if save['completed_lessons'].get(self.data['title'], False):
+            if save['completed_lessons'].get(self.data['title'], False): #display next button if level has already been completed before
                 self.next_button.draw(self.screen)
 
         elif self.state == 'practice':
+            #display score in top right corner
             score = self.font.render("Your Score:" + str(self.current_score), True, (0, 0, 0))
-            if score:
-                self.screen.blit(score, (width*(0.8), height*(0.25)))
+            self.screen.blit(score, (width*(0.8), height*(0.25)))
 
+            #define and display question and number
             question_num = self.current_question + 1
-            question_font = pygame.font.Font('fonts/Vera.ttf', 38)
+            question_font = pygame.font.Font(resource_path('fonts/Vera.ttf'), 38)
             question_index = self.questions_to_ask[self.current_question]
             question = self.data["questions"][question_index]
-            answer_font = pygame.font.Font('fonts/Vera.ttf', 30)
+            answer_font = pygame.font.Font(resource_path('fonts/Vera.ttf'), 30)
             
             text = question_font.render(f"{question_num}. {question['question']}", True, (0, 0, 0))
             self.screen.blit(text, (width/18, height*(0.32)))
 
-            if question["note"]:
-                note_font = pygame.font.Font('fonts/Vera.ttf', 20)
-                note_text = note_font.render(question['note'], True, (0, 0, 0))
+            if question["note"]: #if question has a note disclaimer:
+                note_text = self.font.render(question['note'], True, (0, 0, 0))
                 self.screen.blit(note_text, (width/18, height*(0.32) + 44))
 
             #image
             if self.question_image:
                 self.screen.blit(self.question_image, (width*(0.7), height*(0.38)))
 
+            #answer key
             if self.data['section'] == 'rhythm':
                 answer_key = ['A', 'B', 'C', 'D']
             elif self.data['section'] == 'pitch':
@@ -186,30 +188,30 @@ class practiceScreen(baseScreen):
                 save_highest_score(self.data["title"], 'Normal', accuracy)
                 self.completed = True
 
-            line_width = width*(97/108)
+            line_width = width*(0.9)
             lines = wrap_text("You have completed all 6 questions! Click NEXT to proceed to the next level.", self.font, line_width)
 
             y = height/3
             for line in lines:
                 text = self.font.render(line, True, (0, 0, 0))
-                self.screen.blit(text, (width/18, y))
+                self.screen.blit(text, (width*(0.06), y))
                 y += 40
             accuracy_text = self.font.render(f"Overall Score and Accuracy: 6/{self.total_questions} ({accuracy}%)", True, (0, 0, 0))
-            self.screen.blit(accuracy_text, (width/18, y + 10))
+            self.screen.blit(accuracy_text, (width*(0.06), y + 10))
 
 class answerButton():
     def __init__(self, letter, x, y, width, height):
         self.rect = pygame.Rect(x, y, width, height)
-        self.text = ""
+        self.text = ''
         self.correct = False
-        self.font = pygame.font.Font('fonts/Vera.ttf', 30)
+        self.font = pygame.font.Font(resource_path('fonts/Vera.ttf'), 30)
         self.letter = letter
 
     def draw(self, screen):
         mouse = pygame.mouse.get_pos()
         colour = (220, 220, 220)
 
-        if self.rect.collidepoint(mouse):
+        if self.rect.collidepoint(mouse): #change colour when hovering
             colour = (251, 198, 198)
 
         pygame.draw.rect(screen, colour, self.rect, border_radius=10)

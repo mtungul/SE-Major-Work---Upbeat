@@ -1,10 +1,9 @@
-import os
 import pygame
 from save import load_save, save_data, reset_user_progress
 from levels.levelRunner import levelRunner
 from levels.rhythmLevels import rhythmlevels
 from levels.pitchLevels import pitchlevels
-from utils.config import width, height
+from utils.config import width, height, resource_path
 from utils.icons import tint_icon
 from utils.text import wrap_text
 
@@ -12,10 +11,9 @@ class mainScreen:
     def __init__(self, screen, icons):
         self.screen = screen
         self.icons = icons
-        current_dir = os.getcwd()
-        self.font = pygame.font.Font('fonts/Vera.ttf', 20)
-        self.font_big = pygame.font.Font('fonts/Vera.ttf', 30)
-        self.font_small = pygame.font.Font('fonts/Vera.ttf', 15)
+        self.font = pygame.font.Font(resource_path('fonts/Vera.ttf'), 20)
+        self.font_big = pygame.font.Font(resource_path('fonts/Vera.ttf'), 30)
+        self.font_small = pygame.font.Font(resource_path('fonts/Vera.ttf'), 15)
 
         self.save = load_save()
         self.first_time = self.save["first_time"]
@@ -24,13 +22,13 @@ class mainScreen:
         self.confirm_reset = False
             
         #load images
-        self.pitch_btn = pygame.image.load(os.path.join(current_dir, 'img', 'buttons', 'pitch_btn.png')).convert_alpha()
-        self.rhythm_btn = pygame.image.load(os.path.join(current_dir, 'img', 'buttons', 'rhythm_btn.png')).convert_alpha()
-        self.select_original = pygame.image.load(os.path.join(current_dir, 'img', 'select.png')).convert_alpha()
-        self.logo_original = pygame.image.load(os.path.join(current_dir, 'img', 'logo.png')).convert_alpha()
-        self.icon_meaning_img_original = pygame.image.load(os.path.join(current_dir, 'img', 'icon_details.png')).convert_alpha()
-        self.progress_book_btn = pygame.image.load(os.path.join(current_dir, 'img', 'buttons', 'progress_book_btn.png')).convert_alpha()
-        self.reset_btn = pygame.image.load(os.path.join(os.getcwd(),'img', 'buttons', 'reset_btn.png')).convert_alpha()
+        self.pitch_btn = pygame.image.load(resource_path('img/buttons/pitch_btn.png')).convert_alpha()
+        self.rhythm_btn = pygame.image.load(resource_path('img/buttons/rhythm_btn.png')).convert_alpha()
+        self.select_original = pygame.image.load(resource_path('img/select.png')).convert_alpha()
+        self.logo_original = pygame.image.load(resource_path('img/logo.png')).convert_alpha()
+        self.icon_meaning_img_original = pygame.image.load(resource_path('img/icon_details.png')).convert_alpha()
+        self.progress_book_btn = pygame.image.load(resource_path('img/buttons/progress_book_btn.png')).convert_alpha()
+        self.reset_btn = pygame.image.load(resource_path('img/buttons/reset_btn.png')).convert_alpha()
 
         #resize images
         self.select = pygame.transform.smoothscale(self.select_original, (width*(0.16), height*(0.08)))
@@ -47,20 +45,18 @@ class mainScreen:
 
         self.exit_box = pygame.Rect(0, 0, 20, 20)
 
-    def open_pitch_levels(self):
+    def open_pitch_levels(self): #only works if last level of rhythm has been completed
         save = load_save()
-        if save['completed_lessons'].get('Final Rhythm Practice', False):
+        if save['completed_lessons'].get('Final Rhythm Practice', False): 
             runner = levelRunner(self.screen, pitchlevels, self.icons)
             return runner.get_current_screen()
-        else:
-            print("Must complete rhythm section")
 
     def open_rhythm_levels(self):
         runner = levelRunner(self.screen, rhythmlevels, self.icons)
         return runner.get_current_screen()
     
     def handle_event(self, event):
-        if self.confirm_reset:
+        if self.confirm_reset: #is first so no other events can be taken in unless the confirm question is answered
             new_screen = self.yes_button.handle_event(event)
             if new_screen:
                 return new_screen
@@ -68,7 +64,7 @@ class mainScreen:
             self.no_button.handle_event(event)
             return None
         
-        if self.show_progress:
+        if self.open_progress:
             new_screen = self.reset_button.handle_event(event)
             if new_screen:
                 return new_screen
@@ -86,7 +82,7 @@ class mainScreen:
             return new_screen
         
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            if self.first_time and self.exit_box.collidepoint(event.pos):
+            if self.first_time and self.exit_box.collidepoint(event.pos): #once the welcome popup is closed, it saves the progress as a new game start (no longer first time opening home page)
                 self.first_time = False
                 data = load_save()
                 data['first_time'] = False
@@ -112,7 +108,7 @@ class mainScreen:
         black_box.set_alpha(220) #transparency
         self.screen.blit(black_box, (width/2 - box_width / 2, y))
         
-        #X in the corner
+        #X in the top right corner
         y += 20
         box_x = width / 2 - box_width / 2
         self.exit_box.topleft = (box_x + box_width - 40, y)
@@ -127,8 +123,8 @@ class mainScreen:
         welcome_text = (
         "Upbeat is a beginner friendly educational game that will help you learn about music theory! "
         "Please ensure your sound is turned ON and that you have access to a mouse / trackpad and keyboard. "
-        "Note: Your progress will be saved once you fully complete each level and will be indicated by the "
-        "icons at the top of your screen.")
+        "Your progress will be saved once you fully complete each level and will be indicated by the "
+        "icons at the top of your screen (see example below).")
         
         text_x_start = width * (0.15)
         y += 10
@@ -149,7 +145,7 @@ class mainScreen:
     def show_progress(self):
         self.open_progress = True
 
-        self.pitch_button.hover_enabled = False
+        self.pitch_button.hover_enabled = False #section buttons don't work when the progress book is opened
         self.rhythm_button.hover_enabled = False
 
         self.pitch_button.click_enabled = False
@@ -190,7 +186,7 @@ class mainScreen:
 
         start_y = y + 40
 
-        for level in rhythmlevels:
+        for level in rhythmlevels: #loop through rhythm levels
             self.save = load_save()
             if self.save['completed_lessons'].get(level['title'], False):
                 progress_text = self.font_small.render(f'Level {level["order"]}: {level["title"]}', True, (255, 255, 255))
@@ -202,7 +198,7 @@ class mainScreen:
 
         start_y = y + 40
 
-        for level in pitchlevels:
+        for level in pitchlevels: #loop through pitch levels
             self.save = load_save()
             if self.save['completed_lessons'].get(level['title'], False):
                 progress_text = self.font_small.render(f'Level {level["order"]}: {level["title"]}', True, (255, 255, 255))
@@ -243,7 +239,7 @@ class mainScreen:
         self.yes_button.draw(self.screen)
         self.no_button.draw(self.screen)  
 
-    def reset_game(self):
+    def reset_game(self): #full reset of entire game progress
         reset_user_progress()
         self.confirm_reset = False
 
@@ -281,11 +277,11 @@ class Button:
         self.normal = pygame.transform.smoothscale(image, size)
         self.rect = self.normal.get_rect(topleft=(x, y))
         
-        hover_size = (int(size[0]*1.1), int(size[1]*1.1))
+        hover_size = (int(size[0]*1.1), int(size[1]*1.1)) #image gets bigger when mouse is hovering over
         self.hover = pygame.transform.smoothscale(image, hover_size)
         self.hover_rect = self.hover.get_rect(center=self.rect.center)
 
-        self.sfx = pygame.mixer.Sound('soundExcerpts/sfx/button_click_sfx.mp3')
+        self.sfx = pygame.mixer.Sound(resource_path('soundExcerpts/sfx/button_click_sfx.mp3'))
 
         self.action = action
         self.enabled = True
@@ -296,7 +292,7 @@ class Button:
     def draw(self, screen):
             mouse_pos = pygame.mouse.get_pos()
 
-            if not self.enabled:
+            if not self.enabled: #used for pitch levels when rhythm is sitll being completed
                 self.disabled = tint_icon(self.normal.copy(), (120, 120, 120))
                 screen.blit(self.disabled, self.rect)
             elif self.hover_enabled and self.rect.collidepoint(mouse_pos):
@@ -322,7 +318,7 @@ class textButton:
         self.action = action
 
         self.normal_colour = normalColour
-        self.hover_colour = hoverColour
+        self.hover_colour = hoverColour #colour of text changes when mouse is hovering
 
         self.rect = pygame.Rect(0, 0, 0, 0)
         self.rect.center = position

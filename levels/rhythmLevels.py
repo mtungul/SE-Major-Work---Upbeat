@@ -59,7 +59,7 @@ rhythmlevels = [
     'lessonType' : 'lesson',
     'title' : 'Rest Notes',
     'text' : (
-        "Music is the art of both sound AND silence. As important as it is knowing when to play, it is also important to know when NOT to play. "
+        "Music is the art of both sound AND silence. As important as it is knowing when to play, it is also important to know when to NOT play. "
         "'Rests' are notes that tell us when to NOT play. Similarly to the previous lesson, there are different note values for each rest."),
     'img' : 'rest_value_chart.png',
     'icon' : 'lesson',
@@ -81,13 +81,13 @@ rhythmlevels = [
     'text' : (
         'Now you will get to practice playing both sound and silence! After clicking Begin, you will hear a count in of four beats. '
         'Click the space bar to match the rhythm of the notes on the screen. '
-        '                                                                                                                               '
-        '                                                                                                                               '
-        '                                                                                                                               '
-        '                                                                                                                               '
-        '                                                                                                                               '
-        '                                                                                                                               '
-        '                                                                                                                               '
+        '                                                                                                                                '
+        '                                                                                                                                '
+        '                                                                                                                                '
+        '                                                                                                                                '
+        '                                                                                                                                '
+        '                                                                                                                                '
+        '                                                                                                                                '
         'TIP: Make sure not to press the space bar on a rest note, instead always keep counting to make sure you get the next note on time!'),
     'icon' : 'quaver',
     'notes_easy' : ['crotchet', 'crotchet', 'crotchet', 'crotchet_rest', 'crotchet_rest', 'crotchet_rest'],
@@ -209,7 +209,7 @@ rhythmlevels = [
     'lessonType' : 'lesson',
     'title' : 'Tempo',
     'text' : (
-        'Tempo is the speed of a musical piece, and is it measured in beats per minute (BPM). '
+        'Tempo is the speed of a musical piece, and is measured in beats per minute (BPM). '
         'There are different Italian terms used to describe the different tempo in each piece, '
         'and they are determined by a range of BPM - however, the range of BPM may differ between musicians, '
         'thus tempo names are interpreted from its "feel".'),
@@ -225,7 +225,7 @@ rhythmlevels = [
     'title' : 'Final Rhythm Practice',
     'text' : (
         'To wrap everything up, you will combine the four different lessons about notes, rests, time signature, and tempo!'
-        ' After clicking Begin, you will hear a four beat count in. Click the space bar to match the rhythm of the notes on the screen. Good Luck!'),
+        ' After clicking Begin, you will hear a count in of four beats. Click the space bar to match the rhythm of the notes on the screen. Good Luck!'),
     'icon' : 'quaver',
     'notes_easy' : ['minim', 'minim', 'minim_rest', 'minim', 'minim_rest', 'minim'],
     'notes_med' : ['crotchet', 'crotchet', 'crotchet', 'crotchet', 'quavers', 'crotchet_rest', 'crotchet_rest', 'crotchet_rest'],

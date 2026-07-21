@@ -1,5 +1,6 @@
 import time
 import pygame
+from utils.config import resource_path
 
 class metronome: 
     def __init__(self, pos: tuple, size: tuple, initial_bpm: float, min: int, max: int):
@@ -11,7 +12,7 @@ class metronome:
         self.slider_right_pos = self.pos[0] + (size[0]//2)
         self.slider_top_pos = self.pos[1] - (size[1]//2)
 
-        self.min = min
+        self.min = min #min and max bpm values
         self.max = max
 
         value_range = max - min
@@ -31,13 +32,14 @@ class metronome:
         self.started_beat = 0
         self.finished_beat = 0 
 
+        #rects, fonts and sounds
         self.container_rect = pygame.Rect(self.slider_left_pos, self.slider_top_pos, self.size[0], self.size[1])
         self.button_rect = pygame.Rect(self.slider_left_pos + self.initial_val - 5, self.slider_top_pos, 10, self.size[1])
         self.rect = pygame.Rect(0, 0, self.size[0] + 200, 220)
         self.rect.center = self.pos
-        self.font = pygame.font.Font('fonts/Vera.ttf', 20)
-        self.small_font = pygame.font.Font('fonts/Vera.ttf', 14)
-        self.click_sound = pygame.mixer.Sound('soundExcerpts/metronome_click.wav')
+        self.font = pygame.font.Font(resource_path('fonts/Vera.ttf'), 20)
+        self.small_font = pygame.font.Font(resource_path('fonts/Vera.ttf'), 14)
+        self.click_sound = pygame.mixer.Sound(resource_path('soundExcerpts/metronome_click.wav'))
 
         #buttons
         self.btn_play = pygame.Rect(self.rect.x + (self.rect.width // 2) - 50, self.rect.y + self.rect.height - 60, 100, 35)
@@ -54,7 +56,7 @@ class metronome:
         
         self.bpm_average = self.get_value()
     
-    def get_value(self):
+    def get_value(self): #get value of the slider position to calculate bpm
         val_range = self.slider_right_pos - self.slider_left_pos
         button_val = self.button_rect.centerx - self.slider_left_pos
 
@@ -97,16 +99,16 @@ class metronome:
                     self.grabbed = True
                     self.move_slider(mouse_pos)
 
-            if self.btn_play.collidepoint(mouse_pos):
+            if self.btn_play.collidepoint(mouse_pos): #turns either on or off
                 self.is_playing = not self.is_playing
                     
-            elif self.btn_minus.collidepoint(mouse_pos):
+            elif self.btn_minus.collidepoint(mouse_pos): #decrease bpm
                 self.bpm_average = max(20, self.bpm_average - 1)
                 val_range = self.max - self.min
                 percentage = (self.bpm_average - self.min) / val_range
                 self.button_rect.centerx = int(self.slider_left_pos + (percentage * (self.slider_right_pos - self.slider_left_pos)))
             
-            elif self.btn_plus.collidepoint(mouse_pos):
+            elif self.btn_plus.collidepoint(mouse_pos): #increase bpm
                 self.bpm_average = min(200, self.bpm_average + 1)
                 val_range = self.max - self.min
                 percentage = (self.bpm_average - self.min) / val_range
@@ -123,11 +125,12 @@ class metronome:
     def draw(self, surface):
         pygame.draw.rect(surface, (255, 255, 255), self.rect, border_radius=8)
         
-        if self.is_playing and (self.started_beat or (self.on_beat and not self.finished_beat)):
+        if self.is_playing and (self.started_beat or (self.on_beat and not self.finished_beat)): #when each beat is heard, it flashes bright red
             border_color = (255, 0, 0) 
         else:
             border_color = (250, 177, 177) 
-            
+        
+        #draw rects
         pygame.draw.rect(surface, border_color, self.rect, width=3, border_radius=8)
         pygame.draw.rect(surface, (218, 220, 224), self.container_rect, border_radius=4) #rectangle for slider
         pygame.draw.rect(surface, (224, 114, 114), self.button_rect, border_radius=50) #slider
@@ -136,6 +139,7 @@ class metronome:
         pygame.draw.rect(surface, (60, 60, 60), self.btn_minus, border_radius=4)
         pygame.draw.rect(surface, (60, 60, 60), self.btn_plus, border_radius=4)
 
+        #define and display text
         text_play = self.small_font.render("STOP" if self.is_playing else "START", True, (255, 255, 255))
         text_minus = self.font.render("-", True, (255, 255, 255))
         text_plus = self.font.render("+", True, (255, 255, 255))

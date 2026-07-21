@@ -1,17 +1,16 @@
-import os
 import pygame
 import random
 from save import complete_lesson, load_save, save_recent_score , save_highest_score, save_rhythm_points
 from startScreen import Button, textButton
 from utils.text import wrap_text
-from utils.config import width, height
+from utils.config import width, height, resource_path
 from screens.baseScreen import baseScreen
 
 class practiceScreen(baseScreen):
     def __init__(self, screen, step_data, runner, icons):
         super().__init__(screen, step_data, runner, icons)
         self.completed = False
-        self.state = 'start'
+        self.state = 'start' #states help determine what actions can be done and what is displayed
         self.save = load_save()
         self.points = self.save.get("rhythm_practice_points", {}).get(self.data["title"], 0)
         self.level_passed = False
@@ -23,24 +22,25 @@ class practiceScreen(baseScreen):
         self.difficulty = 'Easy'
         self.is_holding = False
         self.show_count = False
-        self.font_big = pygame.font.Font('fonts/Vera.ttf', 30)
+        self.font_big = pygame.font.Font(resource_path('fonts/Vera.ttf'), 30)
 
-        self.beginButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'buttons', 'begin_btn.png')).convert_alpha()
+        self.beginButton = pygame.image.load(resource_path('img/buttons/begin_btn.png')).convert_alpha()
+        self.tryAgainButton = pygame.image.load(resource_path('img/buttons/try_again_btn.png')).convert_alpha()
+        self.nextLevelButton = pygame.image.load(resource_path('img/buttons/next_button.png')).convert_alpha()
+
         self.begin_button = Button(width*(0.43), height/2, self.beginButton, (width*(0.14), height*(0.1)), self.generate_notes)
-        self.tryAgainButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'buttons', 'try_again_btn.png')).convert_alpha()
         self.try_again_button = Button(width*(0.28), height*(0.75), self.tryAgainButton, (width*(0.14), height*(0.1)), self.generate_notes)
-        self.nextLevelButton = pygame.image.load(os.path.join(os.getcwd(),'img', 'buttons', 'next_button.png')).convert_alpha()
         self.next_level_button = Button(width*(0.60), height*(0.75), self.nextLevelButton, (width*(0.14), height*(0.1)), self.next_level)
         self.count_in_example_button = textButton("Click here for count in example", (width*(0.5), height*(0.7)), self.font, (0, 0, 0), (223, 73, 67), self.play_count_in_example)
 
         #load note and rest images
-        og_crotchet_img = pygame.image.load(os.path.join(os.getcwd(),'img', 'crotchet.png')).convert_alpha()
-        og_crotchet_rest_img = pygame.image.load(os.path.join(os.getcwd(),'img', 'crotchet_rest.png')).convert_alpha()
-        og_quavers_img = pygame.image.load(os.path.join(os.getcwd(),'img', 'quavers.png')).convert_alpha()
-        og_minim_img = pygame.image.load(os.path.join(os.getcwd(),'img', 'minim.png')).convert_alpha()
-        og_minim_rest_img = pygame.image.load(os.path.join(os.getcwd(),'img', 'minim_rest.png')).convert_alpha()
-        og_semibreve_img = pygame.image.load(os.path.join(os.getcwd(),'img', 'semibreve.png')).convert_alpha()
-        og_semibreve_rest_img = pygame.image.load(os.path.join(os.getcwd(),'img', 'semibreve_rest.png')).convert_alpha()
+        og_crotchet_img = pygame.image.load(resource_path('img/crotchet.png')).convert_alpha()
+        og_crotchet_rest_img = pygame.image.load(resource_path('img/crotchet_rest.png')).convert_alpha()
+        og_quavers_img = pygame.image.load(resource_path('img/quavers.png')).convert_alpha()
+        og_minim_img = pygame.image.load(resource_path('img/minim.png')).convert_alpha()
+        og_minim_rest_img = pygame.image.load(resource_path('img/minim_rest.png')).convert_alpha()
+        og_semibreve_img = pygame.image.load(resource_path('img/semibreve.png')).convert_alpha()
+        og_semibreve_rest_img = pygame.image.load(resource_path('img/semibreve_rest.png')).convert_alpha()
 
         #resize images -> original image sizes were * by 0.75
         crotchet_img = pygame.transform.smoothscale(og_crotchet_img, (75, 150))
@@ -64,7 +64,7 @@ class practiceScreen(baseScreen):
 
         #note sounds
         self.note_channel = pygame.mixer.Channel(0) #the space bar notes will be in channel 0 so it won't mix with other existing sounds
-        self.note_sound = pygame.mixer.Sound('soundExcerpts/spacebar_note.mp3')
+        self.note_sound = pygame.mixer.Sound(resource_path('soundExcerpts/spacebar_note.mp3'))
         self.count_in_channel = pygame.mixer.Channel(2)
 
         #player's initial scores
@@ -79,12 +79,12 @@ class practiceScreen(baseScreen):
         self.show_chart = pygame.Rect(0, 0, width*(0.2), height*(0.05)) #rect for text
         self.show_chart_image = None
         if self.data.get("chart"):
-            image_path = os.path.join(os.getcwd(), 'img', self.data["chart"])
+            image_path = resource_path(f'img/{self.data["chart"]}')
             self.show_chart_image_original = pygame.image.load(image_path).convert_alpha()
             self.show_chart_image = pygame.transform.smoothscale(self.show_chart_image_original, (544, 260))
 
     def handle_event(self, event):
-        if self.save['completed_lessons'].get(self.data['title'], False):
+        if self.save['completed_lessons'].get(self.data['title'], False): #if lesson is completed, user can access all buttons
             new_screen = super().handle_event(event)
             if new_screen:
                 return new_screen
@@ -130,11 +130,12 @@ class practiceScreen(baseScreen):
             new_screen = self.try_again_button.handle_event(event)
             if new_screen:
                 return new_screen
-            new_screen = self.next_level_button.handle_event(event)
-            if new_screen:
-                return new_screen
             if self.completed:
                 return self.next_button.handle_event(event)
+            else:
+                new_screen = self.next_level_button.handle_event(event)
+                if new_screen:
+                    return new_screen
             return None
         
         return super().handle_event(event)
@@ -144,8 +145,8 @@ class practiceScreen(baseScreen):
         self.show_count = True
         if pygame.mixer.get_busy():
             return
-        count_in = pygame.mixer.Sound("soundExcerpts/60bpm.mp3")
-        count_in.play(maxtime=4000)
+        count_in = pygame.mixer.Sound(resource_path("soundExcerpts/60bpm.mp3"))
+        count_in.play(maxtime=4000) #stops after 4 counts (aka 4 sec since 60bpm = seconds)
 
     def check_hit_start(self):
         now = pygame.time.get_ticks() - self.timer_start
@@ -190,7 +191,7 @@ class practiceScreen(baseScreen):
         if self.current_note >= len(self.active_notes):
             self.finished_practice()
 
-    def reset_scores(self):
+    def reset_scores(self): #reset count at the start of each round
         self.perfect_count = 0
         self.good_count = 0
         self.miss_count = 0
@@ -238,7 +239,7 @@ class practiceScreen(baseScreen):
         start_x = width*(0.15)
         y = height*(0.41)
 
-        if self.points <= 1:
+        if self.points <= 1: #sets difficulty based on amount of points
             self.difficulty = 'Easy'
             notes = self.data["notes_easy"] 
             num_notes = int(self.data["num_notes_easy"])
@@ -260,7 +261,7 @@ class practiceScreen(baseScreen):
         self.ms_per_beat = 60000/self.bpm
         self.timer_start = pygame.time.get_ticks() + (4 * self.ms_per_beat)
         
-        self.count_in = pygame.mixer.Sound(f"soundExcerpts/{self.bpm}bpm.mp3")
+        self.count_in = pygame.mixer.Sound(resource_path(f"soundExcerpts/{self.bpm}bpm.mp3"))
         self.count_in_channel.play(self.count_in, loops=0)
 
         self.current_note = 0
@@ -275,7 +276,7 @@ class practiceScreen(baseScreen):
         for note in displayed_notes:
             x = start_x + current_x
 
-            self.active_notes.append({
+            self.active_notes.append({ #add to the empty array
                 'image' : self.note_definitions[note]['image'],
                 'position' : (x, y),
                 'duration' : self.note_definitions[note]["duration"],
@@ -285,8 +286,8 @@ class practiceScreen(baseScreen):
                 'width' : self.note_definitions[note]['width'],
             })
             
-            current_x += self.note_definitions[note]["width"]
-            current_time += self.note_definitions[note]["duration"] * self.ms_per_beat
+            current_x += self.note_definitions[note]["width"] #move x position for next note
+            current_time += self.note_definitions[note]["duration"] * self.ms_per_beat #add to time so it knows how long has passed
 
             if note == 'quavers': #since quavers are 2 consecutive beats with one image they need special consideration (gets added twice) 
                 self.active_notes.append({
@@ -299,9 +300,9 @@ class practiceScreen(baseScreen):
                 'width' : 0,
                 })
 
-                current_time += self.note_definitions[note]["duration"] * self.ms_per_beat
+                current_time += self.note_definitions[note]["duration"] * self.ms_per_beat #add time again because each quaver is an individual beat
     
-    def show_chart_text(self):
+    def show_chart_text(self): #charts are there to help user if they are struggling to remember what each note/rest value is, and they don't really wanna go back to the previous level
         self.show_chart.topleft = (width/2 - width*(0.2)/2, height*(0.91)) #rect position
         pygame.draw.rect(self.screen, (90, 90, 90), self.show_chart, border_radius=8)
         chart_text = self.font.render("Hover here to show chart", True, (255, 255, 255))
@@ -312,18 +313,15 @@ class practiceScreen(baseScreen):
         image_rect = self.show_chart_image.get_rect(topleft=(width/2 - 544/2, height/2 - 260/2))
         self.screen.blit(self.show_chart_image, image_rect)
         pygame.draw.rect(self.screen, (0, 0, 0), image_rect, 1)
-        #self.screen.blit(self.show_chart_image, (width/2 - 544/2, height/2 - 260/2)) #display chart in centre
 
     def update_screen(self):
         if self.state != "practice":
             return
-
         if self.current_note >= len(self.active_notes):
             return
-
         note = self.active_notes[self.current_note]
 
-        if note["is_rest"]:
+        if note["is_rest"]: #rests don't require input so it calculates how long it should be and adds to the note count to move to the next note
             self.accuracy_text = ''
             now = pygame.time.get_ticks() - self.timer_start
             end_time = note["hit_time"] + note["duration"] * self.ms_per_beat
@@ -345,7 +343,7 @@ class practiceScreen(baseScreen):
         save_recent_score(self.data['title'], self.difficulty, self.accuracy)
         save_highest_score(self.data['title'], self.difficulty, self.accuracy)
 
-        if self.points >= 4 and self.level_passed:
+        if self.points >= 4 and self.level_passed: #entire level is complete
             self.completed = True
             complete_lesson(self.data["title"])
             self.save = load_save()
@@ -362,7 +360,7 @@ class practiceScreen(baseScreen):
         pygame.draw.line(self.screen, (0,0,0), (width*(0.08) + 10, y - 20), (width*(0.08) + 10, y + 20), 5)
 
         #time signature
-        ts_font = pygame.font.Font('fonts/new_amsterdam/NewAmsterdam.ttf', 80)
+        ts_font = pygame.font.Font(resource_path('fonts/new_amsterdam/NewAmsterdam.ttf'), 80)
         ts_text = ts_font.render("4", True, (0, 0, 0))
         self.screen.blit(ts_text, (width*(0.1), y - 90))
         self.screen.blit(ts_text, (width*(0.1), y))
@@ -385,13 +383,13 @@ class practiceScreen(baseScreen):
         self.update_screen()
 
         if self.state == 'start':
-            line_width = width*(97/108)
+            line_width = width*(0.9)
             lines = wrap_text(self.data["text"], self.font, line_width)
 
             y = height/3
             for line in lines:
                 text = self.font.render(line, True, (0, 0, 0))
-                self.screen.blit(text, (width/18, y))
+                self.screen.blit(text, (width*(0.06), y))
                 y += 40
             
             self.begin_button.draw(self.screen)  
@@ -399,7 +397,7 @@ class practiceScreen(baseScreen):
             if self.save['completed_lessons'].get(self.data['title'], False):
                 self.next_button.draw(self.screen)
 
-            if self.data['order'] == 3:
+            if self.data['order'] == 3: #count in preview before the first rhythm practice level
                 self.count_in_example_button.draw(self.screen)
 
             if self.show_count:
@@ -439,9 +437,10 @@ class practiceScreen(baseScreen):
             if not self.completed:
                 self.next_level_button.draw(self.screen)
             else:
-                self.next_button.draw(self.screen)
-            title_font = pygame.font.Font('fonts/new_amsterdam/NewAmsterdam.ttf', 40)
-            text_font = pygame.font.Font('fonts/new_amsterdam/NewAmsterdam.ttf', 35)
+                self.next_button.draw(self.screen) #only show bottom next button when entire lesson is complete
+
+            title_font = pygame.font.Font(resource_path('fonts/new_amsterdam/NewAmsterdam.ttf'), 40)
+            text_font = pygame.font.Font(resource_path('fonts/new_amsterdam/NewAmsterdam.ttf'), 35)
 
             self.accuracy_text = ''
 
